@@ -1,0 +1,125 @@
+@extends('layout.app')
+@section('content')
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Data Todo</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                            <li class="breadcrumb-item active">Todo</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                @if (session('level') == 1)
+                                    <h3 class="card-title">
+                                        <a href="/todo/create" class="btn btn-block btn-primary">Tambah Data</a>
+                                    </h3>
+                                @endif
+
+                                <div class="card-tools my-2">
+                                    <div class="input-group input-group-sm" style="width: 150px;">
+                                        <input type="search" name="table_search" class="form-control float-right"
+                                            placeholder="Search" name="search" id="search">
+
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-default">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0" style="height: 300px;">
+                                <table class="table table-head-fixed text-nowrap">
+                                    <thead>
+                                        <tr style="text-align:center">
+                                            <th>No</th>
+                                            <th>Terminal Code</th>
+                                            <th>Working List</th>
+                                            <th style="text-align: center">PIC</th>
+                                            <th>Related PIC</th>
+                                            <th>Deadline</th>
+                                            <th>Status</th>
+                                            <th>Complete Date</th>
+                                            <th>Comment Dephead</th>
+                                            <th>Update PIC</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($todo as $item)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $item->terminal->nm_terminal }}</td>
+                                                <td>{{ $item->working_list }}</td>
+                                                <td>{{ $item->karyawan->nik }} | {{ $item->karyawan->nama }}</td>
+                                                <td>{{ $item->relatedpic->nik }} | {{ $item->relatedpic->nama }}</td>
+                                                <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
+                                                <td>
+
+                                                    @if ($item->status == 1)
+                                                        <span class="badge badge-danger">Outstanding</span>
+                                                    @elseif($item->status == 2)
+                                                        <span class="badge badge-warning">On Progress</span>
+                                                    @else
+                                                        <span class="badge badge-success">Done</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($item->complete_date != null)
+                                                    {{ Carbon\Carbon::parse($item->complete_date)->format('d m Y') }}
+
+                                                    @else
+                                                    {{$item->complete_date}}
+                                                    @endif
+                                                </td>
+                                                <td style="white-space: pre-wrap;">{{ $item->comment_dephead }}</td>
+                                                <td>{{ $item->update_pic }}</td>
+                                                <td>
+                                                    <a href="/todo/edit/{{ $item->id }}" class="btn btn-warning"><i
+                                                            class="fas fa-pen"></i></a>
+
+                                                    @if (session('level') == 1)
+                                                        <a href="/todo/destroy/{{ $item->id }}" class="btn btn-danger"
+                                                            onclick="return confirm('Anda ingin menghapus todo?')"><i
+                                                                class="fas fa-trash"></i></a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="11">Belum ada data...</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix">
+                                {{ $todo->links('vendor.pagination.bootstrap-4') }}
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
