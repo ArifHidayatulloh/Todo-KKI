@@ -54,7 +54,10 @@ Route::controller(TodoController::class)->prefix('todo')->group(function () {
     Route::get('/index','index');
     Route::get('/create','create');
     Route::post('/store','store');
+    Route::get('/filterStatus','filterStatus');
     Route::get('/edit/{todo}','edit');
     Route::post('/update/{todo}','update');
+    Route::post('/updatePIC/{todo}','updatePIC');
     Route::get('/destroy/{todo}','destroy');
+    Route::get('/export', 'export');
 });

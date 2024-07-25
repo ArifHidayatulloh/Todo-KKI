@@ -41,7 +41,7 @@
                                 @endforeach
                             @endif
 
-                            <form action="/todo/update/{{ $todo->id }}" method="post" enctype="multipart/form-data">
+                            <form action="/todo/updatePIC/{{ $todo->id }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group" style="display: none;">

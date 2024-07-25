@@ -32,21 +32,38 @@
                                     </h3>
                                 @endif
 
-                                <div class="card-tools my-2">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input type="search" name="table_search" class="form-control float-right"
-                                            placeholder="Search" name="search" id="search">
-
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
+                                <div class="card-tools my-2 d-flex">
+                                    <form action="/todo/filterStatus" method="get" class="mr-2">
+                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                            <select class="custom-select form-control-float float-right border-width-2"
+                                                id="exampleSelectBorderWidth2" name="status">
+                                                <option value="" {{ $status === '' ? 'selected' : '' }}>Pilih status
+                                                </option>
+                                                <option value="1" {{ $status == '1' ? 'selected' : '' }}>Outstanding
+                                                </option>
+                                                <option value="2" {{ $status == '2' ? 'selected' : '' }}>On Progress
+                                                </option>
+                                                <option value="3" {{ $status == '3' ? 'selected' : '' }}>Done</option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
+                                        <form action="/todo/export" method="get" style="display: inline">
+                                            <div class="input-group input-group-sm" >
+                                                <input type="hidden" name="status" value="{{ $status }}">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fas fa-file-excel"></i>
+                                                </button>
+                                            </div>
+                                        </form>
                                 </div>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body table-responsive p-0" style="height: 300px;">
+                            <div class="card-body table-responsive p-0" style="overflow-y: hidden;">
                                 <table class="table table-head-fixed text-nowrap">
                                     <thead>
                                         <tr style="text-align:center">
@@ -73,7 +90,6 @@
                                                 <td>{{ $item->relatedpic->nik }} | {{ $item->relatedpic->nama }}</td>
                                                 <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
                                                 <td>
-
                                                     @if ($item->status == 1)
                                                         <span class="badge badge-danger">Outstanding</span>
                                                     @elseif($item->status == 2)
@@ -84,10 +100,9 @@
                                                 </td>
                                                 <td>
                                                     @if ($item->complete_date != null)
-                                                    {{ Carbon\Carbon::parse($item->complete_date)->format('d m Y') }}
-
+                                                        {{ Carbon\Carbon::parse($item->complete_date)->format('d m Y') }}
                                                     @else
-                                                    {{$item->complete_date}}
+                                                        {{ $item->complete_date }}
                                                     @endif
                                                 </td>
                                                 <td style="white-space: pre-wrap;">{{ $item->comment_dephead }}</td>

@@ -61,12 +61,12 @@
                                 </div>
                             @endif
                             <!-- /.card-header -->
-                            <div class="card-body table-responsive p-0" style="height: 300px;">
+                            <div class="card-body table-responsive p-0" style="overflow-y: hidden;">
                                 <table class="table table-head-fixed text-nowrap">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Depatemen Code</th>
+                                            <th>Departemen Code</th>
                                             <th>NIK Atasan</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -95,7 +95,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer clearfix">
-                               {{$departemen->links('vendor.pagination.bootstrap-4')}}
+                                {{ $departemen->links('vendor.pagination.bootstrap-4') }}
                             </div>
                         </div>
                         <!-- /.card -->

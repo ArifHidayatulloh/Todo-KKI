@@ -109,7 +109,7 @@
                                             id="exampleInputBorderWidth2" name="deadline" required
                                             value="{{ $todo->deadline }}">
                                     </div>
-                                    <div class="form-group">
+                                    {{-- <div class="form-group">
                                         <label for="exampleSelectBorderWidth2">Status</label>
                                         <select class="custom-select form-control-border border-width-2"
                                             id="exampleSelectBorderWidth2" name="status">
@@ -127,7 +127,7 @@
                                                 <option value="3" selected>Done</option>
                                             @endif
                                         </select>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Complete Date</label>
                                         <input type="date" class="form-control form-control-border border-width-2"
