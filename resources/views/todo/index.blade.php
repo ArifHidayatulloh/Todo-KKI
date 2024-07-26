@@ -86,8 +86,8 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->terminal->nm_terminal }}</td>
                                                 <td>{{ $item->working_list }}</td>
-                                                <td>{{ $item->karyawan->nik }} | {{ $item->karyawan->nama }}</td>
-                                                <td>{{ $item->relatedpic->nik }} | {{ $item->relatedpic->nama }}</td>
+                                                <td>{{ $item->karyawan->nama }}</td>
+                                                <td>{{ $item->relatedpic->nama }}</td>
                                                 <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
                                                 <td>
                                                     @if ($item->status == 1)
