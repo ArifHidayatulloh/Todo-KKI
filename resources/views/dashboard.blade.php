@@ -126,11 +126,18 @@
                                                 @forelse($deadlineAsc as $item)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $item->terminal_code }} | {{ $item->terminal->nm_terminal }}
+                                                        <td>{{ $item->terminal->nm_terminal }}
                                                         </td>
                                                         <td>{{ $item->working_list }}</td>
-                                                        <td>{{ $item->karyawan->nik }} | {{ $item->karyawan->nama }}</td>
-                                                        <td>{{ $item->relatedpic->nik }} | {{ $item->relatedpic->nama }}
+                                                        <td>{{ $item->karyawan->nama }}</td>
+                                                        <td>
+                                                            {{ $item->relatedpic1->nama }}
+                                                            @if ($item->relatedpic2 != null)
+                                                                <br>{{ $item->relatedpic2->nama }}
+                                                            @endif
+                                                            @if ($item->relatedpic3 != null)
+                                                                <br>{{ $item->relatedpic3->nama }}
+                                                            @endif
                                                         </td>
                                                         <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}
                                                         </td>

@@ -9,9 +9,9 @@
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/dashboard" class="brand-link">
-        <img src="https://placehold.co/160x160" alt="Logo" class="brand-image img-circle elevation-3"
+        <img src="{{asset('assets/image/logo_koperasi_indonesia.png')}}" alt="Logo" class="brand-image img-circle elevation-3"
             style="opacity: .8">
-        <span class="brand-text font-weight-light">ADMIN | REPORT</span>
+        <span class="brand-text font-weight-light">KKI</span>
     </a>
 
     <!-- Sidebar -->

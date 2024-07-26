@@ -17,9 +17,18 @@ class Todo extends Model
     public function karyawan(){
         return $this->belongsTo(Karyawan::class, 'pic', 'nik');
     }
-    
-    public function relatedpic(){
-        return $this->belongsTo(RelatedPic::class,'id_relatedpic','id_relatedpic');
+
+    public function relatedPic1(){
+        return $this->belongsTo(RelatedPic::class, 'id_relatedpic1', 'id_relatedpic');
     }
+
+    public function relatedPic2(){
+        return $this->belongsTo(RelatedPic::class, 'id_relatedpic2', 'id_relatedpic');
+    }
+
+    public function relatedPic3(){
+        return $this->belongsTo(RelatedPic::class, 'id_relatedpic3', 'id_relatedpic');
+    }
+
 
 }

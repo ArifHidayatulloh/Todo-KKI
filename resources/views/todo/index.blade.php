@@ -52,14 +52,14 @@
                                             </div>
                                         </div>
                                     </form>
-                                        <form action="/todo/export" method="get" style="display: inline">
-                                            <div class="input-group input-group-sm" >
-                                                <input type="hidden" name="status" value="{{ $status }}">
-                                                <button type="submit" class="btn btn-success">
-                                                    <i class="fas fa-file-excel"></i>
-                                                </button>
-                                            </div>
-                                        </form>
+                                    <form action="/todo/export" method="get" style="display: inline">
+                                        <div class="input-group input-group-sm">
+                                            <input type="hidden" name="status" value="{{ $status }}">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-file-excel"></i>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <!-- /.card-header -->
@@ -87,7 +87,15 @@
                                                 <td>{{ $item->terminal->nm_terminal }}</td>
                                                 <td>{{ $item->working_list }}</td>
                                                 <td>{{ $item->karyawan->nama }}</td>
-                                                <td>{{ $item->relatedpic->nama }}</td>
+                                                <td>
+                                                    {{ $item->relatedpic1->nama }}
+                                                    @if ($item->relatedpic2 != null)
+                                                        <br>{{ $item->relatedpic2->nama }}
+                                                    @endif
+                                                    @if ($item->relatedpic3 != null)
+                                                        <br>{{ $item->relatedpic3->nama }}
+                                                    @endif
+                                                </td>
                                                 <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
                                                 <td>
                                                     @if ($item->status == 1)

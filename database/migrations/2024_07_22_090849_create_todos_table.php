@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('terminal_code',10);
             $table->string('working_list',255);
             $table->string('pic', 10);
-            $table->integer('id_relatedpic');
+            $table->integer('id_relatedpic1');
+            $table->integer('id_relatedpic2')->nullable();
+            $table->integer('id_relatedpic3')->nullable();
             $table->date('deadline');
             $table->integer('status');
             $table->date('complete_date')->nullable();

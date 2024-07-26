@@ -50,8 +50,8 @@
                                             id="exampleSelectBorderWidth2" name="terminal_code">
                                             <option value="" selected>Pilih terminal</option>
                                             @forelse ($terminal as $term)
-                                                <option value="{{ $term->terminal_code }}">{{ $term->terminal_code }} |
-                                                    {{ $term->nm_terminal }}</option>
+                                                <option value="{{ $term->terminal_code }}"> {{ $term->nm_terminal }}
+                                                </option>
                                             @empty
                                                 <option value="">Terminal tidak tersedia</option>
                                             @endforelse
@@ -69,7 +69,7 @@
                                             id="exampleSelectBorderWidth2" name="pic">
                                             <option value="" selected>Pilih PIC</option>
                                             @forelse ($karyawan as $kar)
-                                                <option value="{{ $kar->nik }}">{{ $kar->nik }} |
+                                                <option value="{{ $kar->nik }}">{{ $kar->nik }} -
                                                     {{ $kar->nama }}</option>
                                             @empty
                                                 <option value="">PIC tidak tersedia</option>
@@ -77,12 +77,38 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Related PIC</label>
+                                        <label for="exampleSelectBorderWidth2">Related PIC 1</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic">
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic1">
                                             <option value="" selected>Pilih Related PIC</option>
                                             @forelse ($relatedpic as $pic)
-                                                <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} |
+                                                <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
+                                                    {{ $pic->nama }}</option>
+                                            @empty
+                                                <option value="">Related PIC tidak tersedia</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleSelectBorderWidth2">Related PIC 2</label>
+                                        <select class="custom-select form-control-border border-width-2"
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic2">
+                                            <option value="" selected>Pilih Related PIC</option>
+                                            @forelse ($relatedpic as $pic)
+                                                <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
+                                                    {{ $pic->nama }}</option>
+                                            @empty
+                                                <option value="">Related PIC tidak tersedia</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleSelectBorderWidth2">Related PIC 3</label>
+                                        <select class="custom-select form-control-border border-width-2"
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic3">
+                                            <option value="" selected>Pilih Related PIC</option>
+                                            @forelse ($relatedpic as $pic)
+                                                <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
                                                     {{ $pic->nama }}</option>
                                             @empty
                                                 <option value="">Related PIC tidak tersedia</option>
