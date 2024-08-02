@@ -87,7 +87,7 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 1</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic">
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic1">
                                             @forelse ($relatedpic as $pic)
                                                 @if ($todo->id_relatedpic == $pic->id_relatedpic)
                                                     <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}
@@ -105,7 +105,7 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 2</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic">
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic2">
                                             @forelse ($relatedpic as $pic)
                                                 @if ($todo->id_relatedpic == $pic->id_relatedpic)
                                                     <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}
@@ -123,7 +123,7 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 3</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic">
+                                            id="exampleSelectBorderWidth2" name="id_relatedpic3">
                                             @forelse ($relatedpic as $pic)
                                                 @if ($todo->id_relatedpic == $pic->id_relatedpic)
                                                     <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}

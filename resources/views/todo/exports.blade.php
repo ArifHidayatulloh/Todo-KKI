@@ -2,16 +2,16 @@
     <table class="table table-head-fixed text-nowrap">
         <thead>
             <tr style="text-align:center">
-                <th>No</th>
-                <th>Terminal Code</th>
-                <th>Working List</th>
-                <th style="text-align: center">PIC</th>
-                <th>Related PIC</th>
-                <th>Deadline</th>
-                <th>Status</th>
-                <th>Complete Date</th>
-                <th>Comment Dephead</th>
-                <th>Update PIC</th>
+                <th style="width: 20px;">No</th>
+                <th style="width: 150px">Terminal Code</th>
+                <th style="width: 170px">Working List</th>
+                <th style="width: 170px;">PIC</th>
+                <th style="width: 170px">Related PIC</th>
+                <th style="width: 100px;">Deadline</th>
+                <th style="width: 100px;">Status</th>
+                <th style="width: 100px;">Complete Date</th>
+                <th style="width: 250px;">Comment Dephead</th>
+                <th style="width: 250px;">Update PIC</th>
             </tr>
         </thead>
         <tbody>
@@ -21,15 +21,23 @@
                     <td>{{ $item->terminal->nm_terminal }}</td>
                     <td>{{ $item->working_list }}</td>
                     <td>{{ $item->karyawan->nik }} | {{ $item->karyawan->nama }}</td>
-                    <td>{{ $item->relatedpic->nik }} | {{ $item->relatedpic->nama }}</td>
+                    <td>
+                        {{ $item->relatedpic1->nama }}
+                        @if ($item->relatedpic2 != null)
+                            <br>{{ $item->relatedpic2->nama }}
+                        @endif
+                        @if ($item->relatedpic3 != null)
+                            <br>{{ $item->relatedpic3->nama }}
+                        @endif
+                    </td>
                     <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
                     <td>
                         @if ($item->status == 1)
-                            <span class="badge badge-danger">Outstanding</span>
+                            Outstanding
                         @elseif($item->status == 2)
-                            <span class="badge badge-warning">On Progress</span>
+                            On Progress
                         @else
-                            <span class="badge badge-success">Done</span>
+                            Done
                         @endif
                     </td>
                     <td>
@@ -39,8 +47,8 @@
                             {{ $item->complete_date }}
                         @endif
                     </td>
-                    <td style="white-space: pre-wrap;">{{ $item->comment_dephead }}</td>
-                    <td>{{ $item->update_pic }}</td>
+                    <td style="white-space: pre-wrap;">{!! $item->comment_dephead !!}</td>
+                    <td style="white-space: pre-wrap;">{!! $item->update_pic !!}</td>
                 </tr>
             @empty
                 <tr>

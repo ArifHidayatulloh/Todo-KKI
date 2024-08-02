@@ -1,3 +1,5 @@
-Status : On , In, Done
+Status : in , on, Done
 Status in tergantung Update PIC
 Status done complete date
+
+Perubahan excel comment dephead bentuk list

@@ -14,14 +14,43 @@ class TodoController extends Controller
 {
     function index()
     {
-        if(session('level') == 3){
-            $todo = Todo::where('pic', session('nik'))->orderBy('created_at','desc')->paginate(10);
-        }else{
-            $todo = Todo::orderBy('created_at', 'desc')->paginate(10);
+        if (session('level') == 3) {
+            $todos = Todo::where('pic', session('nik'))->orderBy('created_at', 'desc')->paginate(10);
+        } else {
+            $todos = Todo::orderBy('created_at', 'desc')->paginate(10);
+        }
+
+        foreach ($todos as $todo) {
+            // Memecah string comment_dephead menjadi array berdasarkan baris baru
+            $comments = array_map('trim', explode("\n", $todo->comment_dephead));
+
+            // Memecah string update_pic menjadi array berdasarkan baris baru
+            $updates = array_map('trim', explode("\n", $todo->update_pic));
+
+            // Mengelompokkan update berdasarkan nomor tugas
+            $progress = [];
+            foreach ($updates as $update) {
+                // Periksa apakah elemen mengandung titik dan deskripsi
+                if (strpos($update, '.') !== false) {
+                    // Menghapus spasi ekstra di sekitar nomor dan deskripsi
+                    $update = trim($update);
+                    list($num, $desc) = explode('.', $update, 2);
+                    $num = trim($num);
+                    $desc = trim($desc);
+                    if (!isset($progress[$num])) {
+                        $progress[$num] = [];
+                    }
+                    $progress[$num][] = $desc;
+                }
+            }
+
+            // Menyimpan hasil pemecahan ke dalam objek todo
+            $todo->comments = $comments;
+            $todo->progress = $progress;
         }
 
         $status = null;
-        return view('todo.index', compact('todo','status'));
+        return view('todo.index', compact('todos', 'status'));
     }
 
     function create()
@@ -53,37 +82,66 @@ class TodoController extends Controller
         return redirect('/todo/index')->with('success', 'Berhasil menambah todo');
     }
 
-    function filterStatus(Request $request){
+    function filterStatus(Request $request)
+    {
         $status = $request->get('status');
-        if($status == 1){
-            $todo = Todo::where('status', 1)->orderBy('deadline', 'asc')->paginate(10);
-        } elseif($status == 2){
-            $todo = Todo::where('status', 2)->orderBy('deadline', 'asc')->paginate(10);
-        } elseif($status == 3){
-            $todo = Todo::where('status', 3)->orderBy('deadline', 'asc')->paginate(10);
-        } else{
-            $todo = Todo::orderBy('deadline', 'desc')->paginate(10);
+        if ($status == 1) {
+            $todos = Todo::where('status', 1)->orderBy('deadline', 'asc')->paginate(10);
+        } elseif ($status == 2) {
+            $todos = Todo::where('status', 2)->orderBy('deadline', 'asc')->paginate(10);
+        } elseif ($status == 3) {
+            $todos = Todo::where('status', 3)->orderBy('deadline', 'asc')->paginate(10);
+        } else {
+            $todos = Todo::orderBy('deadline', 'desc')->paginate(10);
         }
-        return view('todo.index', compact('todo','status'));
+
+        foreach ($todos as $todo) {
+            // Memecah string comment_dephead menjadi array berdasarkan baris baru
+            $comments = array_map('trim', explode("\n", $todo->comment_dephead));
+
+            // Memecah string update_pic menjadi array berdasarkan baris baru
+            $updates = array_map('trim', explode("\n", $todo->update_pic));
+
+            // Mengelompokkan update berdasarkan nomor tugas
+            $progress = [];
+            foreach ($updates as $update) {
+                // Periksa apakah elemen mengandung titik dan deskripsi
+                if (strpos($update, '.') !== false) {
+                    // Menghapus spasi ekstra di sekitar nomor dan deskripsi
+                    $update = trim($update);
+                    list($num, $desc) = explode('.', $update, 2);
+                    $num = trim($num);
+                    $desc = trim($desc);
+                    if (!isset($progress[$num])) {
+                        $progress[$num] = [];
+                    }
+                    $progress[$num][] = $desc;
+                }
+            }
+
+            // Menyimpan hasil pemecahan ke dalam objek todo
+            $todo->comments = $comments;
+            $todo->progress = $progress;
+        }
+        return view('todo.index', compact('todos', 'status'));
     }
 
     function edit(Todo $todo)
     {
-        if(session('level') == 1){
+        if (session('level') == 1) {
             return view('todo.edit', [
                 'todo' => $todo,
                 'terminal' => Terminal::all(),
                 'karyawan' => Karyawan::all(),
                 'relatedpic' => RelatedPic::all(),
             ]);
-        }else{
+        } else {
             return view('todo.editPic', [
                 'todo' => $todo,
                 'terminal' => Terminal::all(),
                 'karyawan' => Karyawan::all(),
                 'relatedpic' => RelatedPic::all(),
             ]);
-
         }
     }
 
@@ -102,11 +160,11 @@ class TodoController extends Controller
             'update_pic' => ['nullable'],
         ]);
 
-        if($data['complete_date'] != null){
+        if ($data['complete_date'] != null) {
             $data['status'] = 3;
-        }elseif($todo->status == 2){
+        } elseif ($todo->status == 2) {
             $data['status'] = 2;
-        }else{
+        } else {
             $data['status'] = 1;
         }
 
@@ -114,7 +172,8 @@ class TodoController extends Controller
         return redirect('/todo/index')->with('success', 'Berhasil mengubah todo');
     }
 
-    function updatePIC(Request $request, Todo $todo){
+    function updatePIC(Request $request, Todo $todo)
+    {
         $data = $request->validate([
             'terminal_code' => ['required'],
             'working_list' => ['required'],
@@ -134,7 +193,10 @@ class TodoController extends Controller
         } elseif ($todo->status == 1 && $data['update_pic'] != null) {
             // Jika status 1 dan update_pic terisi, ubah menjadi 2
             $data['status'] = 2;
-        } else {
+        } elseif ($todo->status == 2 && $data['update_pic'] != null) {
+            // Jika update_pic terisi, tetap 2
+            $data['status'] = 2;
+        }else{
             // Jika update_pic kosong, tetap 1
             $data['status'] = 1;
         }
@@ -149,7 +211,8 @@ class TodoController extends Controller
         return back()->with('success', 'Berhasil menghapus todo');
     }
 
-    function export(Request $request){
+    function export(Request $request)
+    {
         $status = $request->get('status');
         return Excel::download(new TodosExport($status), 'todo.xlsx');
     }

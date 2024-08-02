@@ -1,3 +1,20 @@
+<style>
+    .comment-cell p {
+    margin: 0;
+    border-bottom: 1px solid #ddd; /* Garis bawah pada setiap komentar */
+    padding-bottom: 5px; /* Spasi di bawah teks komentar */
+    margin-bottom: 5px; /* Jarak antar komentar */
+}
+
+.update-pic-cell p {
+    margin: 0;
+    border-bottom: 1px solid #ddd; /* Garis bawah pada setiap item progres */
+    padding-bottom: 5px; /* Spasi di bawah teks item progres */
+    margin-bottom: 5px; /* Jarak antar item progres */
+}
+
+</style>
+
 @extends('layout.app')
 @section('content')
     <div class="content-wrapper">
@@ -81,7 +98,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($todo as $item)
+                                        @forelse($todos as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->terminal->nm_terminal }}</td>
@@ -113,8 +130,20 @@
                                                         {{ $item->complete_date }}
                                                     @endif
                                                 </td>
-                                                <td style="white-space: pre-wrap;">{{ $item->comment_dephead }}</td>
-                                                <td>{{ $item->update_pic }}</td>
+                                                <td class="comment-cell">
+                                                    @foreach ($item->comments as $comment)
+                                                        <p>{{ $comment }}</p>
+                                                    @endforeach
+                                                </td>
+                                                <td class="update-pic-cell">
+                                                    @foreach ($item->progress as $index => $progress)
+                                                        <p>{{ $index }}.
+                                                            @foreach ($progress as $prog)
+                                                                {{ $prog }},
+                                                            @endforeach
+                                                        </p>
+                                                    @endforeach
+                                                </td>
                                                 <td>
                                                     <a href="/todo/edit/{{ $item->id }}" class="btn btn-warning"><i
                                                             class="fas fa-pen"></i></a>
@@ -136,7 +165,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer clearfix">
-                                {{ $todo->links('vendor.pagination.bootstrap-4') }}
+                                {{ $todos->links('vendor.pagination.bootstrap-4') }}
                             </div>
                         </div>
                         <!-- /.card -->
