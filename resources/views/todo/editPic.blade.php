@@ -44,20 +44,20 @@
                             <form action="/todo/updatePIC/{{ $todo->id }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
-                                    <div class="form-group" style="display: none;">
-                                        <label for="exampleSelectBorderWidth2">Terminal Code</label>
+                                    {{-- <div class="form-group" style="display: none;">
+                                        <label for="exampleSelectBorderWidth2">Departemen Code</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="terminal_code">
-                                            @forelse ($terminal as $term)
-                                                @if ($todo->terminal_code == $term->terminal_code)
-                                                    <option value="{{ $term->terminal_code }}" selected>
-                                                        {{ $term->nm_terminal }}</option>
+                                            id="exampleSelectBorderWidth2" name="dep_code">
+                                            @forelse ($departemen as $dep)
+                                                @if ($todo->dep_code == $dep->dep_code)
+                                                    <option value="{{ $dep->dep_code }}" selected>
+                                                        {{ $dep->departemen }}</option>
                                                 @else
-                                                    <option value="{{ $term->terminal_code }}">
-                                                        {{ $term->nm_terminal }}</option>
+                                                    <option value="{{ $dep->dep_code }}">
+                                                        {{ $dep->departemen }}</option>
                                                 @endif
                                             @empty
-                                                <option value="">Terminal tidak tersedia</option>
+                                                <option value="">Departemen tidak tersedia</option>
                                             @endforelse
                                         </select>
                                     </div>
@@ -87,14 +87,14 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 1</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic1">
-                                            @forelse ($relatedpic as $pic)
-                                                @if ($todo->id_relatedpic == $pic->id_relatedpic)
-                                                    <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}
+                                            id="exampleSelectBorderWidth2" name="relatedpic1">
+                                            @forelse ($karyawan as $pic)
+                                                @if ($todo->relatedpic1 == $pic->nik)
+                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
                                                         -
                                                         {{ $pic->nama }}</option>
                                                 @else
-                                                    <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
+                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
                                                         {{ $pic->nama }}</option>
                                                 @endif
                                             @empty
@@ -105,14 +105,14 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 2</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic2">
-                                            @forelse ($relatedpic as $pic)
-                                                @if ($todo->id_relatedpic == $pic->id_relatedpic)
-                                                    <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}
+                                            id="exampleSelectBorderWidth2" name="relatedpic2">
+                                            @forelse ($karyawan as $pic)
+                                                @if ($todo->relatedpic2 == $pic->nik)
+                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
                                                         -
                                                         {{ $pic->nama }}</option>
                                                 @else
-                                                    <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
+                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
                                                         {{ $pic->nama }}</option>
                                                 @endif
                                             @empty
@@ -123,14 +123,14 @@
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Related PIC 3</label>
                                         <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="id_relatedpic3">
-                                            @forelse ($relatedpic as $pic)
-                                                @if ($todo->id_relatedpic == $pic->id_relatedpic)
-                                                    <option value="{{ $pic->id_relatedpic }}" selected>{{ $pic->nik }}
+                                            id="exampleSelectBorderWidth2" name="relatedpic3">
+                                            @forelse ($karyawan as $pic)
+                                                @if ($todo->relatedpic3 == $pic->nik)
+                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
                                                         -
                                                         {{ $pic->nama }}</option>
                                                 @else
-                                                    <option value="{{ $pic->id_relatedpic }}">{{ $pic->nik }} -
+                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
                                                         {{ $pic->nama }}</option>
                                                 @endif
                                             @empty
@@ -143,7 +143,7 @@
                                         <input type="date" class="form-control form-control-border border-width-2"
                                             id="exampleInputBorderWidth2" name="deadline" required
                                             value="{{ $todo->deadline }}">
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group" style="display: none;">
                                         <label for="exampleSelectBorderWidth2">Status</label>
                                         <select class="custom-select form-control-border border-width-2"
@@ -163,7 +163,7 @@
                                             @endif
                                         </select>
                                     </div>
-                                    <div class="form-group" style="display: none;">
+                                    {{-- <div class="form-group" style="display: none;">
                                         <label for="exampleInputBorderWidth2">Complete Date</label>
                                         <input type="date" class="form-control form-control-border border-width-2"
                                             id="exampleInputBorderWidth2" name="complete_date"
@@ -173,7 +173,7 @@
                                         <label>Comment Dephead</label>
                                         <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Comment Dephead..."
                                             name="comment_dephead" style="white-space: pre-wrap;" required>{{ $todo->comment_dephead }}</textarea>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group">
                                         <label>Update PIC</label>
                                         <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Update PIC..."

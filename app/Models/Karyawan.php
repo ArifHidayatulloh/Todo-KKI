@@ -13,9 +13,10 @@ class Karyawan extends Model
     use HasFactory, Notifiable;
     protected $table = 'karyawan';
     protected $fillable = [
-        'nik', 'dep_code', 'nama', 'email', 'password', 'level',
+        'nik', 'nama', 'email', 'password', 'level',
     ];
     protected $hidden = [
         'password', 'remember_token',
     ];
+    
 }

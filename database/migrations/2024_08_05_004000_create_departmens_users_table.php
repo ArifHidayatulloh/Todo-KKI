@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('karyawan', function (Blueprint $table) {
+        Schema::create('departmens_users', function (Blueprint $table) {
             $table->id();
-            $table->string('nik', 10)->unique();
-            $table->string('nama', 100);
-            $table->string('email', 50);
-            $table->string('password', 255);
-            $table->integer('level');
+            $table->string('nik',10);
+            $table->string('dep_code', 10);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('karyawan');
+        Schema::dropIfExists('departmens_users');
     }
 };

@@ -24,7 +24,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    @if (session('level') != 3)
+                    @if (session('level') == 1)
                         <div class="col-md-3 col-sm-6 col-12">
                             <div class="info-box">
                                 <span class="info-box-icon bg-info"><i class="nav-icon fas fa-landmark"></i></span>
@@ -51,7 +51,7 @@
                             <!-- /.info-box -->
                         </div>
                         <!-- /.col -->
-                        <div class="col-md-3 col-sm-6 col-12">
+                        {{-- <div class="col-md-3 col-sm-6 col-12">
                             <div class="info-box">
                                 <span class="info-box-icon bg-warning"><i class="fas fa-building"></i></span>
 
@@ -62,9 +62,9 @@
                                 <!-- /.info-box-content -->
                             </div>
                             <!-- /.info-box -->
-                        </div>
+                        </div> --}}
                         <!-- /.col -->
-                        <div class="col-md-3 col-sm-6 col-12">
+                        {{-- <div class="col-md-3 col-sm-6 col-12">
                             <div class="info-box">
                                 <span class="info-box-icon bg-danger"><i class="fas fa-users"></i></span>
 
@@ -75,7 +75,7 @@
                                 <!-- /.info-box-content -->
                             </div>
                             <!-- /.info-box -->
-                        </div>
+                        </div> --}}
                     @endif
                     <div class="col-md-3 col-sm-6 col-12">
                         <div class="info-box">
@@ -126,17 +126,17 @@
                                                 @forelse($deadlineAsc as $item)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $item->terminal->nm_terminal }}
+                                                        <td>{{ $item->departemen->departemen }}
                                                         </td>
                                                         <td>{{ $item->working_list }}</td>
                                                         <td>{{ $item->karyawan->nama }}</td>
                                                         <td>
-                                                            {{ $item->relatedpic1->nama }}
-                                                            @if ($item->relatedpic2 != null)
-                                                                <br>{{ $item->relatedpic2->nama }}
+                                                            {{ $item->pic1->nama }}
+                                                            @if ($item->pic2 != null)
+                                                                <br>{{ $item->pic2->nama }}
                                                             @endif
-                                                            @if ($item->relatedpic3 != null)
-                                                                <br>{{ $item->relatedpic3->nama }}
+                                                            @if ($item->pic3 != null)
+                                                                <br>{{ $item->pic3->nama }}
                                                             @endif
                                                         </td>
                                                         <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}

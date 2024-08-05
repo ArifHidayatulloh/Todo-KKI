@@ -56,12 +56,6 @@
                                             id="exampleInputBorderWidth2" placeholder="Nama Departemen" name="departemen"
                                             required>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">NIK Atasan</label>
-                                        <input type="text" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" placeholder="NIK Atasan" name="nik_atasan"
-                                            required>
-                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Tambahkan</button>

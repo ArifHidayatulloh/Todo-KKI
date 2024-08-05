@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Form Departemen</h1>
+                        <h1 class="m-0">Form Departemen User</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                            <li class="breadcrumb-item"><a href="/departemen/index">Departemen</a></li>
+                            <li class="breadcrumb-item"><a href="/departemen_user/index">Departemen User</a></li>
                             <li class="breadcrumb-item active">Form</li>
                         </ol>
                     </div><!-- /.col -->
@@ -28,7 +28,7 @@
                         <!-- general form elements -->
                         <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Departemen</h3>
+                                <h3 class="card-title">Tambah Departemen User</h3>
                             </div>
                             <!-- /.card-header -->
                             @if ($errors->any())
@@ -41,25 +41,38 @@
                                 @endforeach
                             @endif
 
-                            <form action="/departemen/update/{{ $departemen->id }}" method="post"
-                                enctype="multipart/form-data">
+                            <form action="/departemen_user/store" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">Departemen Code</label>
-                                        <input type="text" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" placeholder="Departemen Code" name="dep_code"
-                                            required value="{{ $departemen->dep_code }}">
+                                        <label for="exampleInputBorderWidth2">NIK</label>
+                                        <select class="custom-select form-control-border border-width-2"
+                                            id="exampleSelectBorderWidth2" name="nik">
+                                            <option value="" selected>Pilih karyawan</option>
+                                            @forelse ($karyawan as $kar)
+                                                <option value="{{ $kar->nik }}"> {{ $kar->nik }} | {{ $kar->nama }}
+                                                </option>
+                                            @empty
+                                                <option value="">Karyawan tidak tersedia</option>
+                                            @endforelse
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Departemen</label>
-                                        <input type="text" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" placeholder="Nama Departemen" name="departemen"
-                                            required value="{{ $departemen->departemen }}">
+                                        <select class="custom-select form-control-border border-width-2"
+                                            id="exampleSelectBorderWidth2" name="dep_code">
+                                            <option value="" selected>Pilih Departemen</option>
+                                            @forelse ($departemen as $dep)
+                                                <option value="{{ $dep->dep_code }}"> {{ $dep->dep_code }} | {{ $dep->departemen }}
+                                                </option>
+                                            @empty
+                                                <option value="">Departemen tidak tersedia</option>
+                                            @endforelse
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Ubah</button>
+                                    <button type="submit" class="btn btn-primary">Tambahkan</button>
                                     <button type="reset" class="btn btn-default float-right">Batal</button>
                                 </div>
                             </form>

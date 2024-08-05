@@ -53,14 +53,21 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="/departemen_user/index" class="nav-link">
+                            <i class="nav-icon fas fa-building"></i>
+                            <p>
+                                Departemen User
+                            </p>
+                        </a>
+                    </li>
+                    {{-- <li class="nav-item">
                         <a href="/terminal/index" class="nav-link">
                             <i class="nav-icon fas fa-building"></i>
                             <p>
                                 Terminal
                             </p>
                         </a>
-                    </li>
-
+                    </li> --}}
                     <li class="nav-item">
                         <a href="/relatedpic/index" class="nav-link">
                             <i class="nav-icon fas fa-clipboard"></i>

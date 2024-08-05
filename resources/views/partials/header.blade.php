@@ -21,7 +21,16 @@
                 <!-- User image -->
                 <li class="user-header bg-primary" style="display: flex; align-items:center; justify-content:center;">
                         <p>
-                            {{session('nama')}} - {{session('level')}}
+                            {{session('nama')}} -
+                            @if (session('level') == 1)
+                                General Manager
+                            @elseif(session('level') == 2)
+                                Manager
+                                @elseif(session('level') == 3)
+                                KA Unit
+                                @else
+                                Employee
+                            @endif
                             <small>Dibuat pada {{session('dibuat')}}</small>
                         </p>
                 </li>

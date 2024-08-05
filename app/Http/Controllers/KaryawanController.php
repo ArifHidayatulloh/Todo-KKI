@@ -14,7 +14,7 @@ class KaryawanController extends Controller
     function index(Request $request)
     {
         return view("karyawan.index", [
-            'karyawan' => Karyawan::paginate(5)
+            'karyawan' => Karyawan::paginate(10)
         ]);
     }
 
@@ -30,7 +30,6 @@ class KaryawanController extends Controller
         try {
             $data = $request->validate([
                 'nik' => ['required', 'unique:karyawan'],
-                'dep_code' => ['nullable'],
                 'nama' => ['required'],
                 'email' => ['required'],
                 'password' => ['required'],
@@ -67,7 +66,6 @@ class KaryawanController extends Controller
 
             $data = $request->validate([
                 'nik' => ['required', Rule::unique('karyawan')->ignore($karyawan->id)],
-                'dep_code' => ['nullable'],
                 'nama' => ['required'],
                 'email' => ['required'],
                 'password' => ['nullable'],

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\TodosExport;
+use App\Models\Departemen;
+use App\Models\DepartmenUser;
 use App\Models\Karyawan;
 use App\Models\RelatedPic;
 use App\Models\Terminal;
@@ -14,7 +16,11 @@ class TodoController extends Controller
 {
     function index()
     {
-        if (session('level') == 3) {
+        if(session('level') == 2 || session('level') == 3){
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            $todos = Todo::whereIn('dep_code', $departemenIds)->orderBy('created_at', 'desc')->paginate(10);
+        }
+        elseif (session('level') == 4) {
             $todos = Todo::where('pic', session('nik'))->orderBy('created_at', 'desc')->paginate(10);
         } else {
             $todos = Todo::orderBy('created_at', 'desc')->paginate(10);
@@ -56,7 +62,7 @@ class TodoController extends Controller
     function create()
     {
         return view('todo.create', [
-            'terminal' => Terminal::all(),
+            'departemen' => Departemen::all(),
             'karyawan' => Karyawan::all(),
             'relatedpic' => RelatedPic::all(),
         ]);
@@ -65,19 +71,21 @@ class TodoController extends Controller
     function store(Request $request)
     {
         $data = $request->validate([
-            'terminal_code' => ['required'],
+            'dep_code' => ['required'],
             'working_list' => ['required'],
             'pic' => ['required'],
-            'id_relatedpic1' => ['required'],
-            'id_relatedpic2' => ['nullable'],
-            'id_relatedpic3' => ['nullable'],
+            'relatedpic1' => ['required'],
+            'relatedpic2' => ['nullable'],
+            'relatedpic3' => ['nullable'],
             'deadline' => ['required'],
             'complete_date' => ['nullable'],
             'comment_dephead' => ['required'],
             'update_pic' => ['nullable'],
         ]);
 
+
         $data['status'] = 1;
+        // dd($data);
         Todo::create($data);
         return redirect('/todo/index')->with('success', 'Berhasil menambah todo');
     }
@@ -131,14 +139,14 @@ class TodoController extends Controller
         if (session('level') == 1) {
             return view('todo.edit', [
                 'todo' => $todo,
-                'terminal' => Terminal::all(),
+                'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
                 'relatedpic' => RelatedPic::all(),
             ]);
         } else {
             return view('todo.editPic', [
                 'todo' => $todo,
-                'terminal' => Terminal::all(),
+                'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
                 'relatedpic' => RelatedPic::all(),
             ]);
@@ -148,12 +156,12 @@ class TodoController extends Controller
     function update(Request $request, Todo $todo)
     {
         $data = $request->validate([
-            'terminal_code' => ['required'],
+            'dep_code' => ['required'],
             'working_list' => ['required'],
             'pic' => ['required'],
-            'id_relatedpic1' => ['required'],
-            'id_relatedpic2' => ['nullable'],
-            'id_relatedpic3' => ['nullable'],
+            'relatedpic1' => ['required'],
+            'relatedpic2' => ['nullable'],
+            'relatedpic3' => ['nullable'],
             'deadline' => ['required'],
             'complete_date' => ['nullable'],
             'comment_dephead' => ['required'],
@@ -175,15 +183,6 @@ class TodoController extends Controller
     function updatePIC(Request $request, Todo $todo)
     {
         $data = $request->validate([
-            'terminal_code' => ['required'],
-            'working_list' => ['required'],
-            'pic' => ['required'],
-            'id_relatedpic1' => ['required'],
-            'id_relatedpic2' => ['nullable'],
-            'id_relatedpic3' => ['nullable'],
-            'deadline' => ['required'],
-            'complete_date' => ['nullable'],
-            'comment_dephead' => ['required'],
             'update_pic' => ['nullable'],
         ]);
 
@@ -196,8 +195,10 @@ class TodoController extends Controller
         } elseif ($todo->status == 2 && $data['update_pic'] != null) {
             // Jika update_pic terisi, tetap 2
             $data['status'] = 2;
-        }else{
+        }elseif($data['update_pic'] == null){
             // Jika update_pic kosong, tetap 1
+            $data['status'] = 1;
+        }else{
             $data['status'] = 1;
         }
 

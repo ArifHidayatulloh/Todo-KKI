@@ -69,6 +69,7 @@
                                             </div>
                                         </div>
                                     </form>
+                                    @if (session('level') == 1)
                                     <form action="/todo/export" method="get" style="display: inline">
                                         <div class="input-group input-group-sm">
                                             <input type="hidden" name="status" value="{{ $status }}">
@@ -77,6 +78,7 @@
                                             </button>
                                         </div>
                                     </form>
+                                    @endif
                                 </div>
                             </div>
                             <!-- /.card-header -->
@@ -85,7 +87,7 @@
                                     <thead>
                                         <tr style="text-align:center">
                                             <th>No</th>
-                                            <th>Terminal Code</th>
+                                            <th>Departemen</th>
                                             <th>Working List</th>
                                             <th style="text-align: center">PIC</th>
                                             <th>Related PIC</th>
@@ -101,16 +103,16 @@
                                         @forelse($todos as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->terminal->nm_terminal }}</td>
+                                                <td>{{ $item->departemen->departemen }}</td>
                                                 <td>{{ $item->working_list }}</td>
                                                 <td>{{ $item->karyawan->nama }}</td>
                                                 <td>
-                                                    {{ $item->relatedpic1->nama }}
+                                                    {{ $item->pic1->nama }}
                                                     @if ($item->relatedpic2 != null)
-                                                        <br>{{ $item->relatedpic2->nama }}
+                                                        <br>{{ $item->pic2->nama }}
                                                     @endif
                                                     @if ($item->relatedpic3 != null)
-                                                        <br>{{ $item->relatedpic3->nama }}
+                                                        <br>{{ $item->pic3->nama }}
                                                     @endif
                                                 </td>
                                                 <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>

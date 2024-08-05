@@ -11,24 +11,20 @@ class Todo extends Model
     protected $table = 'todo';
     protected $guarded = ['id'];
 
-    public function terminal(){
-        return $this->belongsTo(Terminal::class,'terminal_code','terminal_code');
+    public function departemen(){
+        return $this->belongsTo(Departemen::class,'dep_code','dep_code');
     }
     public function karyawan(){
         return $this->belongsTo(Karyawan::class, 'pic', 'nik');
     }
 
-    public function relatedPic1(){
-        return $this->belongsTo(RelatedPic::class, 'id_relatedpic1', 'id_relatedpic');
+    public function pic1(){
+        return $this->belongsTo(Karyawan::class, 'relatedpic1', 'nik');
     }
-
-    public function relatedPic2(){
-        return $this->belongsTo(RelatedPic::class, 'id_relatedpic2', 'id_relatedpic');
+    public function pic2(){
+        return $this->belongsTo(Karyawan::class, 'relatedpic2', 'nik');
     }
-
-    public function relatedPic3(){
-        return $this->belongsTo(RelatedPic::class, 'id_relatedpic3', 'id_relatedpic');
+    public function pic3(){
+        return $this->belongsTo(Karyawan::class, 'relatedpic3', 'nik');
     }
-
-
 }

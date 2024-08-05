@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departemen;
+use App\Models\DepartmenUser;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -12,7 +13,7 @@ class DepartemenController extends Controller
 {
     function index(){
         return view("departemen.index",[
-            'departemen' => Departemen::paginate(5)
+            'departemen' => Departemen::paginate(10)
         ]);
     }
 
@@ -25,13 +26,12 @@ class DepartemenController extends Controller
             $data = $request->validate([
                 'dep_code' => ['required','unique:departemen'],
                 'departemen' => ['required'],
-                'nik_atasan' => ['required'],
             ]);
 
             Departemen::create($data);
             return redirect('/departemen/index')->with('success','Berhasil menambah departemen');
         }catch(ValidationException $e){
-            // Periksa apakah error disebabkan oleh NIK yang sudah ada
+            // Periksa apakah error disebabkan oleh dep_code yang sudah ada
             if ($e->validator->errors()->has('dep_code')) {
                 return back()->withErrors(['dep_code' => 'Departemen Code sudah terdaftar!'])->withInput();
             }
@@ -49,7 +49,6 @@ class DepartemenController extends Controller
             $data = $request->validate([
                 'dep_code' => ['required', Rule::unique('departemen')->ignore($departemen->id)],
                 'departemen' => ['required'],
-                'nik_atasan' => ['required'],
             ]);
 
             $departemen->update($data);
@@ -63,7 +62,7 @@ class DepartemenController extends Controller
     }
 
     function destroy(Departemen $departemen){
-        $cek = Karyawan::where('dep_code', $departemen->dep_code)->first();
+        $cek = DepartmenUser::where('dep_code', $departemen->dep_code)->first();
         if ($cek) {
             return back()->withErrors(['dep_code' => 'Departemen code digunakan oleh karyawan'])->withInput();
         } else {

@@ -18,16 +18,16 @@
             @forelse($todo as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->terminal->nm_terminal }}</td>
+                    <td>{{ $item->departemen->departemen }}</td>
                     <td>{{ $item->working_list }}</td>
-                    <td>{{ $item->karyawan->nik }} | {{ $item->karyawan->nama }}</td>
+                    <td>{{ $item->karyawan->nik }} - {{ $item->karyawan->nama }}</td>
                     <td>
-                        {{ $item->relatedpic1->nama }}
+                        {{ $item->pic1->nama }}
                         @if ($item->relatedpic2 != null)
-                            <br>{{ $item->relatedpic2->nama }}
+                            <br>{{ $item->pic2->nama }}
                         @endif
                         @if ($item->relatedpic3 != null)
-                            <br>{{ $item->relatedpic3->nama }}
+                            <br>{{ $item->pic3->nama }}
                         @endif
                     </td>
                     <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>

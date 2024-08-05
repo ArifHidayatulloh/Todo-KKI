@@ -12,6 +12,5 @@ class Departemen extends Model
     protected $fillable = [
         'dep_code',
         'departemen',
-        'nik_atasan',
     ];
 }

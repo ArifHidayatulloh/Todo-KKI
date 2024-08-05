@@ -41,25 +41,13 @@
                                 @endforeach
                             @endif
 
-                            <form action="/karyawan/store" method="post" enctype="multipart/form-data">
+                            <form action="/karyawan/store" method="post" enctype="multipart/form-data" autocomplete="off">
                                 @csrf
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">NIK</label>
                                         <input type="text" class="form-control form-control-border border-width-2"
                                             id="exampleInputBorderWidth2" placeholder="NIK" name="nik" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Departemen Code</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="dep_code">
-                                            <option value="" selected>Pilih departemen</option>
-                                            @forelse ($departemen as $depart)
-                                                <option value="{{ $depart->dep_code }}">{{ $depart->dep_code}} | {{ $depart->departemen }}</option>
-                                            @empty
-                                                <option value="">Departemen tidak tersedia</option>
-                                            @endforelse
-                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Nama</label>
@@ -71,22 +59,23 @@
                                         <label for="exampleInputBorderWidth2">Email</label>
                                         <input type="email" class="form-control form-control-border border-width-2"
                                             id="exampleInputBorderWidth2" placeholder="email@gmail.com" name="email"
-                                            required>
+                                            required autocomplete="off">
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputBorderWidth2">Password</label>
                                         <input type="password" class="form-control form-control-border border-width-2"
                                             id="exampleInputBorderWidth2" placeholder="Password" name="password"
-                                            required>
+                                            required autocomplete="off">
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleSelectBorderWidth2">Level</label>
                                         <select class="custom-select form-control-border border-width-2"
                                             id="exampleSelectBorderWidth2" name="level">
                                             <option value="" selected>Pilih level</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
+                                            <option value="1">General Manager</option>
+                                            <option value="2">Manager</option>
+                                            <option value="3">KA Unit</option>
+                                            <option value="4">Employee</option>
                                         </select>
                                     </div>
                                 </div>

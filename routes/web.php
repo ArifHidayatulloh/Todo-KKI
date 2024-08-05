@@ -6,6 +6,7 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\RelatedPicController;
 use App\Http\Controllers\TerminalController;
 use App\Http\Controllers\TodoController;
+use App\Http\Controllers\DepartemenUserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,6 +22,15 @@ Route::controller(DepartemenController::class)->prefix('departemen')->group(func
     Route::get('/edit/{departemen}','edit');
     Route::post('/update/{departemen}','update');
     Route::get('/destroy/{departemen}','destroy');
+});
+
+Route::controller(DepartemenUserController::class)->prefix('departemen_user')->group(function () {
+    Route::get('/index','index');
+    Route::get('/create','create');
+    Route::post('/store','store');
+    Route::get('/edit/{departemenUser}','edit');
+    Route::post('/update/{departemenUser}','update');
+    Route::get('/destroy/{departemenUser}','destroy');
 });
 
 Route::controller(KaryawanController::class)->prefix('karyawan')->group(function () {

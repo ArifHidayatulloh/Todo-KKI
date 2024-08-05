@@ -6,12 +6,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Data Departemen</h1>
+                        <h1 class="m-0">Data Departemen User</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">Departemen</li>
+                            <li class="breadcrumb-item active">Departemen User</li>
                         </ol>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -27,7 +27,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    <a href="/departemen/create" class="btn btn-block btn-primary">Tambah Data</a>
+                                    <a href="/departemen_user/create" class="btn btn-block btn-primary">Tambah Data</a>
                                 </h3>
 
                                 <div class="card-tools my-2">
@@ -66,21 +66,33 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Departemen Code</th>
+                                            <th>Karyawan</th>
                                             <th>Departemen</th>
+                                            <th>Level</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($departemen as $item)
+                                        @forelse($departemenUser as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->dep_code }}</td>
-                                                <td>{{ $item->departemen }}</td>
+                                                <td>{{ $item->karyawan->nama }}</td>
+                                                <td>{{ $item->departemen->departemen }}</td>
                                                 <td>
-                                                    <a href="/departemen/edit/{{ $item->id }}" class="btn btn-warning"><i
+                                                    @if ($item->karyawan->level == 1)
+                                                        General Manager
+                                                    @elseif($item->karyawan->level == 2)
+                                                        Manager
+                                                    @elseif($item->karyawan->level == 3)
+                                                        KA Unit
+                                                    @else
+                                                        Employee
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="/departemen_user/edit/{{ $item->id }}" class="btn btn-warning"><i
                                                             class="fas fa-pen"></i></a>
-                                                    <a href="/departemen/destroy/{{ $item->id }}" class="btn btn-danger"
+                                                    <a href="/departemen_user/destroy/{{ $item->id }}" class="btn btn-danger"
                                                         onclick="return confirm('Anda ingin menghapus departemen?')"><i
                                                             class="fas fa-trash"></i></a>
                                                 </td>
@@ -95,7 +107,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer clearfix">
-                                {{ $departemen->links('vendor.pagination.bootstrap-4') }}
+                                {{ $departemenUser->links('vendor.pagination.bootstrap-4') }}
                             </div>
                         </div>
                         <!-- /.card -->

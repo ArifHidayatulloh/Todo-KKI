@@ -67,7 +67,6 @@
                                         <tr>
                                             <th>No</th>
                                             <th>NIK</th>
-                                            <th>Departemen Code</th>
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>Level</th>
@@ -79,10 +78,19 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->nik }}</td>
-                                                <td>{{ $item->dep_code }}</td>
                                                 <td>{{ $item->nama }}</td>
                                                 <td>{{ $item->email }}</td>
-                                                <td>{{ $item->level }}</td>
+                                                <td>
+                                                    @if ($item->level == 1)
+                                                        General Manager
+                                                    @elseif($item->level == 2)
+                                                        Manager
+                                                    @elseif($item->level == 3)
+                                                        KA Unit
+                                                    @else
+                                                        Employee
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <a href="/karyawan/edit/{{ $item->id }}" class="btn btn-warning"><i
                                                             class="fas fa-pen"></i></a>

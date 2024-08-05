@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('dep_code', 10)->unique();
             $table->string('departemen', 100);
-            $table->string('nik_atasan', 10);
             $table->timestamps();
         });
     }
