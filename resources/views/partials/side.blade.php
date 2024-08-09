@@ -35,7 +35,7 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                @if (session('level') == 1)
+                @if (session('level') == 1 || session('level') == 2)
                     <li class="nav-item">
                         <a href="/departemen/index" class="nav-link">
                             <i class="nav-icon fas fa-landmark"></i>
@@ -60,21 +60,6 @@
                             </p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
-                        <a href="/terminal/index" class="nav-link">
-                            <i class="nav-icon fas fa-building"></i>
-                            <p>
-                                Terminal
-                            </p>
-                        </a>
-                    </li> --}}
-                    <li class="nav-item">
-                        <a href="/relatedpic/index" class="nav-link">
-                            <i class="nav-icon fas fa-clipboard"></i>
-                            <p>
-                                Related Pic
-                            </p>
-                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="/todo/index" class="nav-link">

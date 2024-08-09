@@ -74,10 +74,11 @@
                                             id="exampleSelectBorderWidth2" name="level">
                                             <option value="{{ $karyawan->level }}" selected>{{ $karyawan->level }}
                                             </option>
-                                            <option value="1">General Manager</option>
-                                            <option value="2">Manager</option>
-                                            <option value="3">KA Unit</option>
-                                            <option value="4">Employee</option>
+                                            <option value="1">Pengurus</option>
+                                            <option value="2">General Manager</option>
+                                            <option value="3">Manager</option>
+                                            <option value="4">KA Unit</option>
+                                            <option value="5">Employee</option>
                                         </select>
                                     </div>
                                 </div>

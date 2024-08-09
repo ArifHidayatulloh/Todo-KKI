@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departemen;
+use App\Models\DepartmenUser;
 use App\Models\Karyawan;
 use App\Models\Todo;
 use Illuminate\Http\Request;
@@ -90,10 +91,14 @@ class KaryawanController extends Controller
 
     function destroy(Karyawan $karyawan)
     {
-        $cek_todo = Todo::where('pic', $karyawan->nik)->first();
 
-        if ($cek_todo) {
-            return back()->withErrors(['nik' => 'NIK karyawan digunakan pada todo'])->withInput();
+        $cek = DepartmenUser::where('nik', $karyawan->nik)->first();
+        if ($cek) {
+            $cek_todo = Todo::where('pic', $karyawan->nik)->where('relatedpic', $karyawan->nik)->first();
+            if ($cek_todo) {
+                return back()->withErrors(['nik' => 'NIK karyawan digunakan pada todo'])->withInput();
+            }
+            return back()->withErrors(['nik' => 'NIK karyawan digunakan pada departemen user'])->withInput();
         }
         $karyawan->delete();
         return back()->with('success', 'Berhasil menghapus karyawan');

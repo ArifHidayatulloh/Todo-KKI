@@ -6,39 +6,57 @@ use App\Exports\TodosExport;
 use App\Models\Departemen;
 use App\Models\DepartmenUser;
 use App\Models\Karyawan;
-use App\Models\RelatedPic;
-use App\Models\Terminal;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TodoController extends Controller
 {
-    function index()
+    public function index(Request $request)
     {
-        if(session('level') == 2 || session('level') == 3){
+        $status = $request->get('status', '');
+        $pic = $request->get('pic', '');
+        $dep_code = $request->get('dep_code', '');
+
+        // Inisialisasi query berdasarkan level pengguna
+        if (session('level') == 3 || session('level') == 4) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
-            $todos = Todo::whereIn('dep_code', $departemenIds)->orderBy('created_at', 'desc')->paginate(10);
-        }
-        elseif (session('level') == 4) {
-            $todos = Todo::where('pic', session('nik'))->orderBy('created_at', 'desc')->paginate(10);
+            $query = Todo::whereIn('dep_code', $departemenIds);
+        } elseif (session('level') == 5) {
+            $query = Todo::where('pic', session('nik'));
         } else {
-            $todos = Todo::orderBy('created_at', 'desc')->paginate(10);
+            $query = Todo::query();
         }
 
+        // Filter berdasarkan status jika diberikan
+        if ($status != '') {
+            $query->where('status', $status);
+        }
+
+        // Filter berdasarkan PIC jika diberikan
+        if ($pic != '') {
+            $query->where('pic', $pic);
+        }
+
+        // Filter berdasarkan departemen jika diberikan
+        if ($dep_code != '') {
+            $query->where('dep_code', $dep_code);
+        }
+
+        // Ambil data todo dengan relasi karyawan dan departemen
+        $todos = $query->with(['karyawan', 'departemen'])->orderBy('created_at', 'desc')->paginate(10);
+
+        // Olah data todo untuk mendapatkan komentar dan progres
         foreach ($todos as $todo) {
-            // Memecah string comment_dephead menjadi array berdasarkan baris baru
+            // Pisahkan komentar pada field `comment_dephead`
             $comments = array_map('trim', explode("\n", $todo->comment_dephead));
 
-            // Memecah string update_pic menjadi array berdasarkan baris baru
+            // Pisahkan update pada field `update_pic`
             $updates = array_map('trim', explode("\n", $todo->update_pic));
 
-            // Mengelompokkan update berdasarkan nomor tugas
             $progress = [];
             foreach ($updates as $update) {
-                // Periksa apakah elemen mengandung titik dan deskripsi
                 if (strpos($update, '.') !== false) {
-                    // Menghapus spasi ekstra di sekitar nomor dan deskripsi
                     $update = trim($update);
                     list($num, $desc) = explode('.', $update, 2);
                     $num = trim($num);
@@ -50,13 +68,17 @@ class TodoController extends Controller
                 }
             }
 
-            // Menyimpan hasil pemecahan ke dalam objek todo
+            // Tambahkan komentar dan progres ke masing-masing todo
             $todo->comments = $comments;
             $todo->progress = $progress;
         }
 
-        $status = null;
-        return view('todo.index', compact('todos', 'status'));
+        // Ambil data karyawan dan departemen untuk dropdown
+        $karyawan = Karyawan::all();
+        $departemenList = Departemen::all(); // Ambil semua departemen
+
+        // Kembalikan view dengan data yang diperlukan
+        return view('todo.index', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
     }
 
     function create()
@@ -64,45 +86,69 @@ class TodoController extends Controller
         return view('todo.create', [
             'departemen' => Departemen::all(),
             'karyawan' => Karyawan::all(),
-            'relatedpic' => RelatedPic::all(),
         ]);
     }
 
     function store(Request $request)
     {
+        // Validasi data
         $data = $request->validate([
             'dep_code' => ['required'],
             'working_list' => ['required'],
             'pic' => ['required'],
-            'relatedpic1' => ['required'],
-            'relatedpic2' => ['nullable'],
-            'relatedpic3' => ['nullable'],
+            'relatedpic' => ['array'], // Array
             'deadline' => ['required'],
             'complete_date' => ['nullable'],
             'comment_dephead' => ['required'],
             'update_pic' => ['nullable'],
         ]);
 
+        // Menetapkan status
+        $data['status'] = 2;
 
-        $data['status'] = 1;
-        // dd($data);
+        // Jika tidak ada relatedpic, set ke array kosong
+        $data['relatedpic'] = $data['relatedpic'] ?? [];
+
+        // Simpan data ke database
         Todo::create($data);
+
+        // Redirect dengan pesan sukses
         return redirect('/todo/index')->with('success', 'Berhasil menambah todo');
     }
 
     function filterStatus(Request $request)
     {
+
+        $pic = $request->get('pic');
         $status = $request->get('status');
-        if ($status == 1) {
-            $todos = Todo::where('status', 1)->orderBy('deadline', 'asc')->paginate(10);
-        } elseif ($status == 2) {
-            $todos = Todo::where('status', 2)->orderBy('deadline', 'asc')->paginate(10);
-        } elseif ($status == 3) {
-            $todos = Todo::where('status', 3)->orderBy('deadline', 'asc')->paginate(10);
-        } else {
-            $todos = Todo::orderBy('deadline', 'desc')->paginate(10);
+        $nik = session('nik');
+        $level = session('level');
+
+        // Menentukan query dasar berdasarkan level pengguna
+        $query = Todo::query();
+
+        if ($level == 3 || $level == 4) {
+            // Manager dan Kepala Departemen: Filter berdasarkan kode departemen
+            $departemenIds = DepartmenUser::where('nik', $nik)->pluck('dep_code');
+            $query->whereIn('dep_code', $departemenIds);
+        } elseif ($level == 5) {
+            // Employee: Filter berdasarkan PIC
+            $query->where('pic', $nik);
         }
 
+        // Filter status
+        if ($status == 1) {
+            $query->where('status', 1);
+        } elseif ($status == 2) {
+            $query->where('status', 2);
+        } elseif ($status == 3) {
+            $query->where('status', 3);
+        }
+
+        // Mengurutkan dan mengambil data tugas dengan pagination
+        $todos = $query->orderBy('deadline', 'asc')->paginate(10);
+
+        // Memproses setiap todo untuk menambahkan komentar dan progres
         foreach ($todos as $todo) {
             // Memecah string comment_dephead menjadi array berdasarkan baris baru
             $comments = array_map('trim', explode("\n", $todo->comment_dephead));
@@ -131,51 +177,61 @@ class TodoController extends Controller
             $todo->comments = $comments;
             $todo->progress = $progress;
         }
-        return view('todo.index', compact('todos', 'status'));
+        $karyawan = Karyawan::all();
+        return view('todo.index', compact('todos', 'status', 'karyawan', 'pic'));
     }
 
     function edit(Todo $todo)
     {
-        if (session('level') == 1) {
+        // Pastikan relatedpic adalah array
+        if (is_string($todo->relatedpic)) {
+            $todo->relatedpic = json_decode($todo->relatedpic, true) ?? [];
+        } else {
+            $todo->relatedpic = $todo->relatedpic ?? [];
+        }
+
+        if (session('level') == 1 || session('level') == 2) {
             return view('todo.edit', [
                 'todo' => $todo,
                 'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
-                'relatedpic' => RelatedPic::all(),
             ]);
         } else {
             return view('todo.editPic', [
                 'todo' => $todo,
                 'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
-                'relatedpic' => RelatedPic::all(),
             ]);
         }
     }
 
     function update(Request $request, Todo $todo)
     {
+        // Validasi input
         $data = $request->validate([
             'dep_code' => ['required'],
             'working_list' => ['required'],
             'pic' => ['required'],
-            'relatedpic1' => ['required'],
-            'relatedpic2' => ['nullable'],
-            'relatedpic3' => ['nullable'],
+            'relatedpic' => 'array|nullable',
             'deadline' => ['required'],
-            'complete_date' => ['nullable'],
+            'complete_date' => ['nullable', 'date'],
             'comment_dephead' => ['required'],
             'update_pic' => ['nullable'],
         ]);
 
+        // Tentukan status
         if ($data['complete_date'] != null) {
-            $data['status'] = 3;
-        } elseif ($todo->status == 2) {
-            $data['status'] = 2;
+            if ($data['complete_date'] > $data['deadline']) {
+                $data['status'] = 1; // Status jika complete_date setelah deadline
+            } else {
+                $data['status'] = 3; // Status jika complete_date sebelum atau sama dengan deadline
+            }
         } else {
-            $data['status'] = 1;
+            // Tentukan status default jika complete_date null
+            $data['status'] = $todo->status == 2 ? 2 : 2; // Jika status sebelumnya adalah 2, tetap 2
         }
 
+        // Update data todo
         $todo->update($data);
         return redirect('/todo/index')->with('success', 'Berhasil mengubah todo');
     }
@@ -189,17 +245,14 @@ class TodoController extends Controller
         if ($todo->status == 3 && $data['update_pic'] != null) {
             // Jika status sudah 3 dan update_pic terisi, tetap 3
             $data['status'] = 3;
-        } elseif ($todo->status == 1 && $data['update_pic'] != null) {
-            // Jika status 1 dan update_pic terisi, ubah menjadi 2
-            $data['status'] = 2;
         } elseif ($todo->status == 2 && $data['update_pic'] != null) {
             // Jika update_pic terisi, tetap 2
             $data['status'] = 2;
-        }elseif($data['update_pic'] == null){
+        } elseif ($data['update_pic'] == null) {
             // Jika update_pic kosong, tetap 1
-            $data['status'] = 1;
-        }else{
-            $data['status'] = 1;
+            $data['status'] = 2;
+        } else {
+            $data['status'] = 2;
         }
 
         $todo->update($data);
@@ -215,6 +268,8 @@ class TodoController extends Controller
     function export(Request $request)
     {
         $status = $request->get('status');
-        return Excel::download(new TodosExport($status), 'todo.xlsx');
+        $dep_code = $request->get('dep_code');
+        $pic = $request->get('pic');
+        return Excel::download(new TodosExport($status,$dep_code,$pic), 'todo.xlsx');
     }
 }

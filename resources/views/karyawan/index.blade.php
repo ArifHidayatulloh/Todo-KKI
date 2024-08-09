@@ -67,10 +67,10 @@
                                         <tr>
                                             <th>No</th>
                                             <th>NIK</th>
-                                            <th>Nama</th>
+                                            <th>Name</th>
                                             <th>Email</th>
-                                            <th>Level</th>
-                                            <th>Aksi</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,10 +82,12 @@
                                                 <td>{{ $item->email }}</td>
                                                 <td>
                                                     @if ($item->level == 1)
+                                                        Pengurus
+                                                        @elseif($item->level == 2)
                                                         General Manager
-                                                    @elseif($item->level == 2)
-                                                        Manager
                                                     @elseif($item->level == 3)
+                                                        Manager
+                                                    @elseif($item->level == 4)
                                                         KA Unit
                                                     @else
                                                         Employee

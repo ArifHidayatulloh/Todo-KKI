@@ -66,9 +66,9 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Departemen Code</th>
-                                            <th>Departemen</th>
-                                            <th>Aksi</th>
+                                            <th>Department Code</th>
+                                            <th>Department</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -55,19 +55,18 @@ class IndexController extends Controller
         $oneWeekLater = Carbon::now()->addWeek();
         $nik = session('nik');
         $level = session('level');
-        if($level == 2 || $level == 3){
+        if ($level == 2 || $level == 3) {
             $departemenIds = DepartmenUser::where('nik', $nik)->pluck('dep_code');
-            $deadlineAsc = Todo::whereIn('status',[1,2])
-                ->whereIn('dep_code',$departemenIds)
+            $deadlineAsc = Todo::whereIn('status', [1, 2])
+                ->whereIn('dep_code', $departemenIds)
                 ->where('deadline', '<', $oneWeekLater)
-                ->orderBy('deadline','asc')
+                ->orderBy('deadline', 'asc')
                 ->get();
 
-            $outstanding = Todo::where('status',1)->whereIn('dep_code',$departemenIds)->count();
-            $onProgres = Todo::where('status',2)->whereIn('dep_code',$departemenIds)->count();
-            $todos = $outstanding-$onProgres;
-        }
-        elseif ($level == 4) {
+            $outstanding = Todo::where('status', 1)->whereIn('dep_code', $departemenIds)->count();
+            $onProgres = Todo::where('status', 2)->whereIn('dep_code', $departemenIds)->count();
+            $todos = $outstanding - $onProgres;
+        } elseif ($level == 4) {
             // Data deadline terdekat
             $deadlineAsc = Todo::whereIn('status', [1, 2])
                 ->where('pic', session('nik'))
@@ -86,6 +85,35 @@ class IndexController extends Controller
             $outstanding = Todo::where('status', 1)->count();
             $onprogres = Todo::where('status', 2)->count();
             $todos = $outstanding + $onprogres;
+        }
+
+        foreach ($deadlineAsc as $todo) {
+            // Memecah string comment_dephead menjadi array berdasarkan baris baru
+            $comments = array_map('trim', explode("\n", $todo->comment_dephead));
+
+            // Memecah string update_pic menjadi array berdasarkan baris baru
+            $updates = array_map('trim', explode("\n", $todo->update_pic));
+
+            // Mengelompokkan update berdasarkan nomor tugas
+            $progress = [];
+            foreach ($updates as $update) {
+                // Periksa apakah elemen mengandung titik dan deskripsi
+                if (strpos($update, '.') !== false) {
+                    // Menghapus spasi ekstra di sekitar nomor dan deskripsi
+                    $update = trim($update);
+                    list($num, $desc) = explode('.', $update, 2);
+                    $num = trim($num);
+                    $desc = trim($desc);
+                    if (!isset($progress[$num])) {
+                        $progress[$num] = [];
+                    }
+                    $progress[$num][] = $desc;
+                }
+            }
+
+            // Menyimpan hasil pemecahan ke dalam objek todo
+            $todo->comments = $comments;
+            $todo->progress = $progress;
         }
 
         return view('dashboard', [

@@ -11,6 +11,17 @@ class Todo extends Model
     protected $table = 'todo';
     protected $guarded = ['id'];
 
+
+    protected $casts = [
+        'relatedpic' => 'array',
+    ];
+
+    // Accessor untuk relatedpic
+    public function getRelatedpicAttribute($value)
+    {
+        return json_decode($value, true) ?? [];
+    }
+
     public function departemen(){
         return $this->belongsTo(Departemen::class,'dep_code','dep_code');
     }
@@ -18,13 +29,17 @@ class Todo extends Model
         return $this->belongsTo(Karyawan::class, 'pic', 'nik');
     }
 
-    public function pic1(){
-        return $this->belongsTo(Karyawan::class, 'relatedpic1', 'nik');
-    }
-    public function pic2(){
-        return $this->belongsTo(Karyawan::class, 'relatedpic2', 'nik');
-    }
-    public function pic3(){
-        return $this->belongsTo(Karyawan::class, 'relatedpic3', 'nik');
-    }
+     // Accessor to get related PIC names
+     public function getRelatedPicNamesAttribute()
+     {
+         $relatedPicNiks = $this->relatedpic;
+         $relatedPicNames = [];
+
+         if ($relatedPicNiks) {
+             $relatedPicNames = Karyawan::whereIn('nik', $relatedPicNiks)->pluck('nama', 'nik')->toArray();
+         }
+
+         return $relatedPicNames;
+     }
+
 }

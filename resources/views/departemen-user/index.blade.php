@@ -67,9 +67,9 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Karyawan</th>
-                                            <th>Departemen</th>
-                                            <th>Level</th>
-                                            <th>Aksi</th>
+                                            <th>Department</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -80,14 +80,16 @@
                                                 <td>{{ $item->departemen->departemen }}</td>
                                                 <td>
                                                     @if ($item->karyawan->level == 1)
-                                                        General Manager
+                                                    Pengurus
                                                     @elseif($item->karyawan->level == 2)
-                                                        Manager
-                                                    @elseif($item->karyawan->level == 3)
-                                                        KA Unit
-                                                    @else
-                                                        Employee
-                                                    @endif
+                                                    General Manager
+                                                @elseif($item->karyawan->level == 3)
+                                                    Manager
+                                                @elseif($item->karyawan->level == 4)
+                                                    KA Unit
+                                                @else
+                                                    Employee
+                                                @endif
                                                 </td>
                                                 <td>
                                                     <a href="/departemen_user/edit/{{ $item->id }}" class="btn btn-warning"><i

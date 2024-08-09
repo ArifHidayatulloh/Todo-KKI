@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Departemen;
 use App\Models\DepartmenUser;
-use App\Models\Karyawan;
+use App\Models\Todo;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -64,7 +64,11 @@ class DepartemenController extends Controller
     function destroy(Departemen $departemen){
         $cek = DepartmenUser::where('dep_code', $departemen->dep_code)->first();
         if ($cek) {
-            return back()->withErrors(['dep_code' => 'Departemen code digunakan oleh karyawan'])->withInput();
+            $cekTodo = Todo::where('dep_code', $departemen->dep_code)->first();
+            if($cekTodo){
+                return back()->withErrors(['dep_code' => 'Departemen code digunakan pada todo'])->withInput();
+            }
+            return back()->withErrors(['dep_code' => 'Departemen code digunakan pada departmen user'])->withInput();
         } else {
             // Hapus departemen jika tidak ada karyawan yang menggunakannya
             $departemen->delete();

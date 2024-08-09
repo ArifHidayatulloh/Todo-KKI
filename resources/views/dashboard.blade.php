@@ -1,3 +1,25 @@
+<style>
+    .comment-cell p {
+        margin: 0;
+        border-bottom: 1px solid #ddd;
+        /* Garis bawah pada setiap komentar */
+        padding-bottom: 5px;
+        /* Spasi di bawah teks komentar */
+        margin-bottom: 5px;
+        /* Jarak antar komentar */
+    }
+
+    .update-pic-cell p {
+        margin: 0;
+        border-bottom: 1px solid #ddd;
+        /* Garis bawah pada setiap item progres */
+        padding-bottom: 5px;
+        /* Spasi di bawah teks item progres */
+        margin-bottom: 5px;
+        /* Jarak antar item progres */
+    }
+</style>
+
 @extends('layout.app')
 @section('content')
     <!-- Content Wrapper. Contains page content -->
@@ -110,7 +132,7 @@
                                             <thead>
                                                 <tr style="text-align:center">
                                                     <th>No</th>
-                                                    <th>Terminal Code</th>
+                                                    <th>Department</th>
                                                     <th>Working List</th>
                                                     <th style="text-align: center">PIC</th>
                                                     <th>Related PIC</th>
@@ -119,7 +141,7 @@
                                                     <th>Complete Date</th>
                                                     <th>Comment Dephead</th>
                                                     <th>Update PIC</th>
-                                                    <th>Aksi</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -131,12 +153,12 @@
                                                         <td>{{ $item->working_list }}</td>
                                                         <td>{{ $item->karyawan->nama }}</td>
                                                         <td>
-                                                            {{ $item->pic1->nama }}
-                                                            @if ($item->pic2 != null)
-                                                                <br>{{ $item->pic2->nama }}
-                                                            @endif
-                                                            @if ($item->pic3 != null)
-                                                                <br>{{ $item->pic3->nama }}
+
+                                                            @if ($item->relatedpic != null)
+                                                                @foreach ($item->relatedPicNames as $relpic)
+                                                                    {{ $relpic }}
+                                                                    <br>
+                                                                @endforeach
                                                             @endif
                                                         </td>
                                                         <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}
@@ -158,9 +180,20 @@
                                                                 {{ $item->complete_date }}
                                                             @endif
                                                         </td>
-                                                        <td style="white-space: pre-wrap;">{{ $item->comment_dephead }}
+                                                        <td class="comment-cell">
+                                                            @foreach ($item->comments as $comment)
+                                                                <p>{{ $comment }}</p>
+                                                            @endforeach
                                                         </td>
-                                                        <td>{{ $item->update_pic }}</td>
+                                                        <td class="update-pic-cell">
+                                                            @foreach ($item->progress as $index => $progress)
+                                                                <p>{{ $index }}.
+                                                                    @foreach ($progress as $prog)
+                                                                        {{ $prog }},
+                                                                    @endforeach
+                                                                </p>
+                                                            @endforeach
+                                                        </td>
                                                         <td>
                                                             <a href="/todo/edit/{{ $item->id }}"
                                                                 class="btn btn-warning"><i class="fas fa-pen"></i></a>

@@ -50,7 +50,7 @@
                                             id="exampleSelectBorderWidth2" name="nik">
                                             <option value="" selected>Pilih karyawan</option>
                                             @forelse ($karyawan as $kar)
-                                                <option value="{{ $kar->nik }}"> {{ $kar->nik }} | {{ $kar->nama }}
+                                                <option value="{{ $kar->nik }}">{{ $kar->nama }}
                                                 </option>
                                             @empty
                                                 <option value="">Karyawan tidak tersedia</option>
@@ -63,7 +63,7 @@
                                             id="exampleSelectBorderWidth2" name="dep_code">
                                             <option value="" selected>Pilih Departemen</option>
                                             @forelse ($departemen as $dep)
-                                                <option value="{{ $dep->dep_code }}"> {{ $dep->dep_code }} | {{ $dep->departemen }}
+                                                <option value="{{ $dep->dep_code }}">{{ $dep->departemen }}
                                                 </option>
                                             @empty
                                                 <option value="">Departemen tidak tersedia</option>

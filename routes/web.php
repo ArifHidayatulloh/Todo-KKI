@@ -42,23 +42,7 @@ Route::controller(KaryawanController::class)->prefix('karyawan')->group(function
     Route::get('/destroy/{karyawan}','destroy');
 });
 
-Route::controller(TerminalController::class)->prefix('terminal')->group(function () {
-    Route::get('/index','index');
-    Route::get('/create','create');
-    Route::post('/store','store');
-    Route::get('/edit/{terminal}','edit');
-    Route::post('/update/{terminal}','update');
-    Route::get('/destroy/{terminal}','destroy');
-});
 
-Route::controller(RelatedPicController::class)->prefix('relatedpic')->group(function () {
-    Route::get('/index','index');
-    Route::get('/create','create');
-    Route::post('/store','store');
-    Route::get('/edit/{relatedpic}','edit');
-    Route::post('/update/{relatedpic}','update');
-    Route::get('/destroy/{relatedpic}','destroy');
-});
 
 Route::controller(TodoController::class)->prefix('todo')->group(function () {
     Route::get('/index','index');

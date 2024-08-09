@@ -15,14 +15,32 @@ class TodosExport implements FromView
      */
 
     protected $status;
+    protected $dep_code;
+    protected $pic;
 
-    public function __construct($status)
+    public function __construct($status, $dep_code, $pic)
     {
         $this->status = $status;
+        $this->dep_code = $dep_code;
+        $this->pic = $pic;
     }
     public function view(): View
     {
-        $todos = $this->status ? Todo::where('status', $this->status)->get() : Todo::all();
+        $query = Todo::query();
+
+        if ($this->status) {
+            $query->where('status', $this->status);
+        }
+
+        if ($this->dep_code) {
+            $query->where('dep_code', $this->dep_code);
+        }
+
+        if ($this->pic) {
+            $query->where('pic', $this->pic);
+        }
+
+        $todos = $query->get();
 
         foreach ($todos as $todo) {
             $todo->comment_dephead = nl2br(e($todo->comment_dephead));

@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('dep_code',10);
             $table->string('working_list',255);
             $table->string('pic', 10);
-            $table->integer('relatedpic1');
-            $table->integer('relatedpic2')->nullable();
-            $table->integer('relatedpic3')->nullable();
+            $table->json('relatedpic')->nullable();
             $table->date('deadline');
             $table->integer('status');
             $table->date('complete_date')->nullable();

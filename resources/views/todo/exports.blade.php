@@ -20,14 +20,13 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->departemen->departemen }}</td>
                     <td>{{ $item->working_list }}</td>
-                    <td>{{ $item->karyawan->nik }} - {{ $item->karyawan->nama }}</td>
+                    <td>{{ $item->karyawan->nama }}</td>
                     <td>
-                        {{ $item->pic1->nama }}
-                        @if ($item->relatedpic2 != null)
-                            <br>{{ $item->pic2->nama }}
-                        @endif
-                        @if ($item->relatedpic3 != null)
-                            <br>{{ $item->pic3->nama }}
+                        @if ($item->relatedpic != null)
+                            @foreach ($item->relatedPicNames as $relpic)
+                                {{ $relpic }}
+                                <br>
+                            @endforeach
                         @endif
                     </td>
                     <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>

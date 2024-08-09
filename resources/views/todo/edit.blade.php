@@ -23,14 +23,12 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <!-- left column -->
-                    <div class="col-md-6">
-                        <!-- general form elements -->
+                    <!-- Form Container -->
+                    <div class="col-md-12">
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Ubah Todo</h3>
                             </div>
-                            <!-- /.card-header -->
                             @if ($errors->any())
                                 @foreach ($errors->all() as $error)
                                     <div class="alert alert-warning alert-dismissible">
@@ -44,124 +42,87 @@
                             <form action="/todo/update/{{ $todo->id }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="card-body">
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Departemen Code</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="dep_code">
-                                            @forelse ($departemen as $dep)
-                                                @if ($todo->dep_code == $dep->dep_code)
-                                                    <option value="{{ $dep->dep_code }}" selected>
-                                                        {{ $dep->departemen }}</option>
-                                                @else
-                                                    <option value="{{ $dep->dep_code }}">
-                                                        {{ $dep->departemen }}</option>
-                                                @endif
-                                            @empty
-                                                <option value="">Departemen tidak tersedia</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">Working List</label>
-                                        <input type="text" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" placeholder="Working List" name="working_list"
-                                            required value="{{ $todo->working_list }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">PIC</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="pic">
-                                            @forelse ($karyawan as $kar)
-                                                @if ($todo->pic == $kar->nik)
-                                                    <option value="{{ $kar->nik }}" selected>{{ $kar->nik }} -
-                                                        {{ $kar->nama }}</option>
-                                                @else
-                                                    <option value="{{ $kar->nik }}">{{ $kar->nik }} -
-                                                        {{ $kar->nama }}</option>
-                                                @endif
-                                            @empty
-                                                <option value="">PIC tidak tersedia</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Related PIC 1</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="relatedpic1">
-                                            <option value="" selected>Pilih Related PIC</option>
-                                            @forelse ($karyawan as $pic)
-                                                @if ($todo->relatedpic1 == $pic->nik)
-                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
-                                                        -
-                                                        {{ $pic->nama }}</option>
-                                                @else
-                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
-                                                        {{ $pic->nama }}</option>
-                                                @endif
-                                            @empty
-                                                <option value="">Related PIC tidak tersedia</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Related PIC 2</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="relatedpic2">
-                                            <option value="" selected>Pilih Related PIC</option>
-                                            @forelse ($karyawan as $pic)
-                                                @if ($todo->relatedpic2 == $pic->nik)
-                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
-                                                        -
-                                                        {{ $pic->nama }}</option>
-                                                @else
-                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
-                                                        {{ $pic->nama }}</option>
-                                                @endif
-                                            @empty
-                                                <option value="">Related PIC tidak tersedia</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleSelectBorderWidth2">Related PIC 3</label>
-                                        <select class="custom-select form-control-border border-width-2"
-                                            id="exampleSelectBorderWidth2" name="relatedpic3">
-                                            <option value="" selected>Pilih Related PIC</option>
-                                            @forelse ($karyawan as $pic)
-                                                @if ($todo->relatedpic3 == $pic->nik)
-                                                    <option value="{{ $pic->nik }}" selected>{{ $pic->nik }}
-                                                        -
-                                                        {{ $pic->nama }}</option>
-                                                @else
-                                                    <option value="{{ $pic->nik }}">{{ $pic->nik }} -
-                                                        {{ $pic->nama }}</option>
-                                                @endif
-                                            @empty
-                                                <option value="">Related PIC tidak tersedia</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">Deadline</label>
-                                        <input type="date" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" name="deadline" required
-                                            value="{{ $todo->deadline }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputBorderWidth2">Complete Date</label>
-                                        <input type="date" class="form-control form-control-border border-width-2"
-                                            id="exampleInputBorderWidth2" name="complete_date"
-                                            value="{{ $todo->complete_date }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Comment Dephead</label>
-                                        <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Comment Dephead..."
-                                            name="comment_dephead" style="white-space: pre-wrap;" required>{{ $todo->comment_dephead }}</textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Update PIC</label>
-                                        <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Update PIC..."
-                                            name="update_pic" style="white-space: pre-wrap;">{{ $todo->update_pic }}</textarea>
+                                    <div class="row">
+                                        <!-- Left Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exampleSelectBorderWidth2">Departemen</label>
+                                                <select class="custom-select form-control-border border-width-2"
+                                                    id="exampleSelectBorderWidth2" name="dep_code">
+                                                    @forelse ($departemen as $dep)
+                                                        <option value="{{ $dep->dep_code }}"
+                                                            {{ $todo->dep_code == $dep->dep_code ? 'selected' : '' }}>
+                                                            {{ $dep->departemen }}
+                                                        </option>
+                                                    @empty
+                                                        <option value="">Departemen tidak tersedia</option>
+                                                    @endforelse
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputBorderWidth2">Working List</label>
+                                                <input type="text"
+                                                    class="form-control form-control-border border-width-2"
+                                                    id="exampleInputBorderWidth2" placeholder="Working List"
+                                                    name="working_list" required value="{{ $todo->working_list }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleSelectBorderWidth2">PIC</label>
+                                                <select class="custom-select form-control-border border-width-2"
+                                                    id="exampleSelectBorderWidth2" name="pic">
+                                                    @forelse ($karyawan as $kar)
+                                                        <option value="{{ $kar->nik }}"
+                                                            {{ $todo->pic == $kar->nik ? 'selected' : '' }}>
+                                                            {{ $kar->nik }} - {{ $kar->nama }}
+                                                        </option>
+                                                    @empty
+                                                        <option value="">PIC tidak tersedia</option>
+                                                    @endforelse
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleSelectBorderWidth2">Related PIC</label>
+                                                @foreach ($karyawan as $kar)
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="relatedpic[]"
+                                                            value="{{ $kar->nik }}" id="relatedpic{{ $kar->nik }}"
+                                                            {{ in_array($kar->nik, $todo->relatedpic) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="relatedpic{{ $kar->nik }}">
+                                                            {{ $kar->nik }} - {{ $kar->nama }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="exampleInputBorderWidth2">Deadline</label>
+                                                <input type="date"
+                                                    class="form-control form-control-border border-width-2"
+                                                    id="exampleInputBorderWidth2" name="deadline" required
+                                                    value="{{ $todo->deadline }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputBorderWidth2">Complete Date</label>
+                                                <input type="date"
+                                                    class="form-control form-control-border border-width-2"
+                                                    id="exampleInputBorderWidth2" name="complete_date"
+                                                    value="{{ $todo->complete_date }}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Comment Dephead</label>
+                                                <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Comment Dephead..."
+                                                    name="comment_dephead" style="white-space: pre-wrap;" required>{{ $todo->comment_dephead }}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Update PIC</label>
+                                                <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Update PIC..."
+                                                    name="update_pic" style="white-space: pre-wrap;">{{ $todo->update_pic }}</textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -170,9 +131,7 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
             </div>
         </section>
