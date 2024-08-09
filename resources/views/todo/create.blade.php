@@ -46,7 +46,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="exampleSelectBorderWidth2">Departemen</label>
-                                                <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="dep_code">
+                                                <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="dep_code" required>
                                                     <option value="" selected>Pilih departemen</option>
                                                     @forelse ($departemen as $dep)
                                                         <option value="{{ $dep->dep_code }}">{{ $dep->departemen }}</option>
@@ -61,7 +61,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="exampleSelectBorderWidth2">PIC</label>
-                                                <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="pic">
+                                                <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="pic" required>
                                                     <option value="" selected>Pilih PIC</option>
                                                     @forelse ($karyawan as $kar)
                                                         <option value="{{ $kar->nik }}">{{ $kar->nama }}</option>
@@ -75,7 +75,7 @@
                                                 <div class="form-checkpic"  style="height:150px; overflow-y:auto;">
                                                 @foreach ($karyawan as $kar)
                                                     <div class="form-check" >
-                                                        <input class="form-check-input" type="checkbox" name="relatedpic[]" value="{{ $kar->nik }}" id="relatedpic{{ $kar->nik }}">
+                                                        <input class="form-check-input" type="checkbox" name="relatedpic[]" value="{{ $kar->nik }}" id="relatedpic{{ $kar->nik }}" required>
                                                         <label class="form-check-label" for="relatedpic{{ $kar->nik }}">
                                                             {{ $kar->nama }}
                                                         </label>
