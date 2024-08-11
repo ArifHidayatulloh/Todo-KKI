@@ -46,7 +46,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    @if (session('level') == 1)
+                    @if (session('level') == 1 || session('level') == 2)
                         <div class="col-md-3 col-sm-6 col-12">
                             <div class="info-box">
                                 <span class="info-box-icon bg-info"><i class="nav-icon fas fa-landmark"></i></span>
@@ -99,13 +99,40 @@
                             <!-- /.info-box -->
                         </div> --}}
                     @endif
+
+                </div>
+                <div class="row">
                     <div class="col-md-3 col-sm-6 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-primary"><i class="fas fa-list-ol"></i></span>
+                            <span class="info-box-icon bg-warning"><i class="fas fa-list-ol"></i></span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">To Do</span>
-                                <span class="info-box-number">{{ $todos }}</span>
+                                <span class="info-box-text">On Progress</span>
+                                <span class="info-box-number">{{ $todoProgres }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success"><i class="fas fa-list-ol"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Done</span>
+                                <span class="info-box-number">{{ $todoDone }}</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-danger"><i class="fas fa-list-ol"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Outstanding</span>
+                                <span class="info-box-number">{{ $todoOutstanding }}</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>

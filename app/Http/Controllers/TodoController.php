@@ -22,10 +22,12 @@ class TodoController extends Controller
         if (session('level') == 3 || session('level') == 4) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
             $query = Todo::whereIn('dep_code', $departemenIds);
+            $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
         } elseif (session('level') == 5) {
             $query = Todo::where('pic', session('nik'));
         } else {
             $query = Todo::query();
+            $departemenList = Departemen::all();
         }
 
         // Filter berdasarkan status jika diberikan
@@ -75,7 +77,7 @@ class TodoController extends Controller
 
         // Ambil data karyawan dan departemen untuk dropdown
         $karyawan = Karyawan::all();
-        $departemenList = Departemen::all(); // Ambil semua departemen
+         // Ambil semua departemen
 
         // Kembalikan view dengan data yang diperlukan
         return view('todo.index', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList'));

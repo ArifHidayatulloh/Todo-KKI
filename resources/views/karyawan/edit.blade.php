@@ -72,7 +72,18 @@
                                         <label for="exampleSelectBorderWidth2">Level</label>
                                         <select class="custom-select form-control-border border-width-2"
                                             id="exampleSelectBorderWidth2" name="level">
-                                            <option value="{{ $karyawan->level }}" selected>{{ $karyawan->level }}
+                                            <option value="{{ $karyawan->level }}" selected>
+                                                @if ($karyawan->level == 1)
+                                                    Pengurus
+                                                @elseif($karyawan->level == 2)
+                                                    General Manager
+                                                @elseif($karyawan->level == 3)
+                                                    Manager
+                                                @elseif($karyawan->level == 4)
+                                                    KA Unit
+                                                @else
+                                                    Employee
+                                                @endif
                                             </option>
                                             <option value="1">Pengurus</option>
                                             <option value="2">General Manager</option>

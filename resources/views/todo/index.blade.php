@@ -43,30 +43,65 @@
         /* Sesuaikan ukuran minimum sesuai kebutuhan */
     }
 
+    /* Opsi Dropdown */
     .option-list {
         display: none;
         position: absolute;
-        background-color: white;
+        background-color: #fff;
         border: 1px solid #ddd;
-        list-style-type: none;
+        border-radius: 4px;
+        list-style: none;
         margin: 0;
         padding: 0;
-        width: 120px;
-        z-index: 10000;
-        /* Pastikan berada di atas elemen lain */
-        max-height: 200px;
-        /* Sesuaikan tinggi maksimum */
+        width: 200px;
+        /* Lebar dropdown */
+        z-index: 1000;
+        max-height: 300px;
         overflow-y: auto;
-        /* Menambahkan scrollbar vertikal jika terlalu banyak item */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.2s ease-in-out;
     }
 
     .option-list li {
-        padding: 8px 12px;
+        padding: 10px;
         cursor: pointer;
+        transition: background-color 0.2s ease;
     }
 
     .option-list li:hover {
         background-color: #f1f1f1;
+    }
+
+    .option-toggle {
+        display: inline-block;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        background-color: #fff;
+        transition: background-color 0.2s ease;
+    }
+
+    .option-toggle:hover {
+        background-color: #f1f1f1;
+    }
+
+    .option-toggle::after {
+        content: '\25BC';
+        /* Panah ke bawah */
+        font-size: 12px;
+        margin-left: 8px;
+    }
+
+    .min-height-table {
+        min-height: 400px;
+        /* Sesuaikan tinggi minimum sesuai kebutuhan */
+    }
+
+    .min-height-table tbody tr:last-child td {
+        border-bottom: none;
+        /* Menghilangkan garis bawah pada baris terakhir jika tabel kosong */
     }
 </style>
 
@@ -93,9 +128,6 @@
         </div>
         <!-- /.content-header -->
 
-        <input type="text" hidden name="status" value="{{ $status }}">
-        <input type="text" hidden name="pic" value="{{ $pic }}">
-        <input type="text" hidden name="dep_code" value="{{ $dep_code }}">
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -111,10 +143,12 @@
 
                                 <div class="card-tools my-2 d-flex">
                                     @if (session('level') == 1 || session('level') == 2)
-                                        <form action="/todo/export" method="get" class="ml-2">
+                                        <form action="/todo/export" method="get" class="ml-2" id="export-form">
                                             <input type="hidden" name="status" value="{{ $status }}">
                                             <input type="hidden" name="pic" value="{{ $pic }}">
-                                            <button type="submit" class="btn btn-success">
+                                            <input type="text" hidden name="dep_code" value="{{ $dep_code }}">
+                                            <button type="submit" class="btn btn-success" id="export-button"
+                                                @if ($todos->isEmpty()) disabled @endif>
                                                 <i class="fas fa-file-excel"></i>
                                             </button>
                                         </form>
@@ -123,38 +157,46 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
-                                <table class="table table-head-fixed text-nowrap">
+                                <table class="table table-head-fixed text-nowrap min-height-table">
                                     <thead>
                                         <tr style="text-align:center">
                                             <th>No</th>
-                                            <th class="departemen-column" style="position: relative;">
-                                                Departemen
-                                                <ul class="option-list departemen-options">
-                                                    <li data-value="">All</li>
-                                                    @foreach ($departemenList as $departemen)
-                                                        <li data-value="{{ $departemen->dep_code }}"
-                                                            {{ $dep_code == $departemen->dep_code ? 'selected' : '' }}>
-                                                            {{ $departemen->departemen }}
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </th>
+                                            @if (session('level') == 1 || session('level') == 2 || session('level') == 3)
+                                                <th class="departemen-column option-toggle">
+                                                    Departemen
+                                                    <ul class="option-list departemen-options">
+                                                        <li data-value="">All</li>
+                                                        @foreach ($departemenList as $departemen)
+                                                            <li data-value="{{ $departemen->dep_code }}"
+                                                                {{ $dep_code == $departemen->dep_code ? 'selected' : '' }}>
+                                                                {{ $departemen->departemen }}
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </th>
+                                            @else
+                                                <th>Departemen</th>
+                                            @endif
                                             <th>Working List</th>
-                                            <th class="pic-column" style="position: relative;">
-                                                PIC
-                                                <ul class="option-list pic-options">
-                                                    <li data-value="">All</li>
-                                                    @foreach ($karyawan as $kar)
-                                                        <li data-value="{{ $kar->nik }}"
-                                                            {{ $pic == $kar->nik ? 'selected' : '' }}>
-                                                            {{ $kar->nama }}
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </th>
+                                            @if (session('level') == 1 || session('level') == 2)
+                                                <th class="pic-column option-toggle">
+                                                    PIC
+                                                    <ul class="option-list pic-options">
+                                                        <li data-value="">All</li>
+                                                        @foreach ($karyawan as $kar)
+                                                            <li data-value="{{ $kar->nik }}"
+                                                                {{ $pic == $kar->nik ? 'selected' : '' }}>
+                                                                {{ $kar->nama }}
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </th>
+                                            @else
+                                                <th>PIC</th>
+                                            @endif
                                             <th>Related PIC</th>
                                             <th>Deadline</th>
-                                            <th class="status-column" style="position: relative;">
+                                            <th class="status-column option-toggle">
                                                 Status
                                                 <ul class="option-list">
                                                     <li data-value="">All</li>
@@ -254,112 +296,94 @@
 <!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Event listeners for Status
-        var thStatus = document.querySelector('th.status-column');
-        var optionListStatus = thStatus.querySelector('.option-list');
+        // Function to toggle dropdown visibility
+        function toggleDropdown(thElement) {
+            var optionList = thElement.querySelector('.option-list');
+            var isVisible = optionList.style.display === 'block';
+            optionList.style.display = isVisible ? 'none' : 'block';
+        }
 
-        thStatus.addEventListener('click', function() {
-            optionListStatus.style.display = (optionListStatus.style.display === 'none' ||
-                optionListStatus.style.display === '') ? 'block' : 'none';
-        });
-
-        optionListStatus.querySelectorAll('li').forEach(function(item) {
-            item.addEventListener('click', function() {
-                var selectedValue = this.getAttribute('data-value');
-                submitForm('status', selectedValue);
+        // Function to handle option selection
+        function handleOptionClick(thElement, field) {
+            var optionList = thElement.querySelector('.option-list');
+            optionList.querySelectorAll('li').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    var selectedValue = this.getAttribute('data-value');
+                    submitForm(field, selectedValue);
+                });
             });
-        });
+        }
 
-        // Event listeners for Departemen
-        var thDepartemen = document.querySelector('th.departemen-column');
-        var optionListDepartemen = thDepartemen.querySelector('.departemen-options');
-
-        thDepartemen.addEventListener('click', function() {
-            optionListDepartemen.style.display = (optionListDepartemen.style.display === 'none' ||
-                optionListDepartemen.style.display === '') ? 'block' : 'none';
-        });
-
-        optionListDepartemen.querySelectorAll('li').forEach(function(item) {
-            item.addEventListener('click', function() {
-                var selectedValue = this.getAttribute('data-value');
-                submitForm('dep_code', selectedValue);
-            });
-        });
-
-        // Event listeners for PIC
-        var thPic = document.querySelector('th.pic-column');
-        var optionListPic = thPic.querySelector('.pic-options');
-
-        thPic.addEventListener('click', function() {
-            optionListPic.style.display = (optionListPic.style.display === 'none' || optionListPic.style
-                .display === '') ? 'block' : 'none';
-        });
-
-        optionListPic.querySelectorAll('li').forEach(function(item) {
-            item.addEventListener('click', function() {
-                var selectedValue = this.getAttribute('data-value');
-                submitForm('pic', selectedValue);
-            });
-        });
-
-        // Sembunyikan opsi jika klik di luar th status, departemen, atau pic
-        document.addEventListener('click', function(event) {
-            if (!thStatus.contains(event.target)) {
-                optionListStatus.style.display = 'none';
-            }
-            if (!thDepartemen.contains(event.target)) {
-                optionListDepartemen.style.display = 'none';
-            }
-            if (!thPic.contains(event.target)) {
-                optionListPic.style.display = 'none';
-            }
-        });
-
-        // Fungsi untuk submit form dengan nilai yang dipilih
+        // Function to submit form with selected filter
         function submitForm(field, value) {
             var form = document.createElement('form');
             form.method = 'get';
             form.action = '/todo/index';
 
-            // Ambil nilai dari status, departemen, dan PIC yang sudah dipilih
-            var currentStatus = document.querySelector('input[name="status"]').value;
-            var currentDepCode = document.querySelector('input[name="dep_code"]').value;
-            var currentPic = document.querySelector('input[name="pic"]').value;
-
-            // Buat input untuk field yang dipilih
+            // Add the selected filter field
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = field;
             input.value = value;
             form.appendChild(input);
 
-            // Buat input untuk field yang sudah dipilih sebelumnya
-            if (field !== 'status') {
-                var statusInput = document.createElement('input');
-                statusInput.type = 'hidden';
-                statusInput.name = 'status';
-                statusInput.value = currentStatus;
-                form.appendChild(statusInput);
-            }
-
-            if (field !== 'dep_code') {
-                var depCodeInput = document.createElement('input');
-                depCodeInput.type = 'hidden';
-                depCodeInput.name = 'dep_code';
-                depCodeInput.value = currentDepCode;
-                form.appendChild(depCodeInput);
-            }
-
-            if (field !== 'pic') {
-                var picInput = document.createElement('input');
-                picInput.type = 'hidden';
-                picInput.name = 'pic';
-                picInput.value = currentPic;
-                form.appendChild(picInput);
-            }
+            // Add other filter fields if they exist
+            ['status', 'dep_code', 'pic'].forEach(function(filterField) {
+                if (filterField !== field) {
+                    var existingInput = document.querySelector(`input[name="${filterField}"]`);
+                    if (existingInput) {
+                        var newInput = document.createElement('input');
+                        newInput.type = 'hidden';
+                        newInput.name = filterField;
+                        newInput.value = existingInput.value;
+                        form.appendChild(newInput);
+                    }
+                }
+            });
 
             document.body.appendChild(form);
             form.submit();
         }
+
+        // Setup event listeners
+        var thStatus = document.querySelector('th.status-column');
+        var thDepartemen = document.querySelector('th.departemen-column');
+        var thPic = document.querySelector('th.pic-column');
+
+        if (thStatus) {
+            var optionListStatus = thStatus.querySelector('.option-list');
+            thStatus.addEventListener('click', function() {
+                toggleDropdown(thStatus);
+            });
+            handleOptionClick(thStatus, 'status');
+        }
+
+        if (thDepartemen) {
+            var optionListDepartemen = thDepartemen.querySelector('.departemen-options');
+            thDepartemen.addEventListener('click', function() {
+                toggleDropdown(thDepartemen);
+            });
+            handleOptionClick(thDepartemen, 'dep_code');
+        }
+
+        if (thPic) {
+            var optionListPic = thPic.querySelector('.pic-options');
+            thPic.addEventListener('click', function() {
+                toggleDropdown(thPic);
+            });
+            handleOptionClick(thPic, 'pic');
+        }
+
+        // Hide dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            [thStatus, thDepartemen, thPic].forEach(function(thElement) {
+                var optionList = thElement ? thElement.querySelector(
+                    '.option-list, .departemen-options, .pic-options') : null;
+                if (optionList && !thElement.contains(event.target) && !optionList.contains(
+                        event.target)) {
+                    optionList.style.display = 'none';
+                }
+            });
+        });
     });
 </script>

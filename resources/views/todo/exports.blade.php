@@ -3,7 +3,7 @@
         <thead>
             <tr style="text-align:center">
                 <th style="width: 20px;">No</th>
-                <th style="width: 150px">Terminal Code</th>
+                <th style="width: 150px">Departemen</th>
                 <th style="width: 170px">Working List</th>
                 <th style="width: 170px;">PIC</th>
                 <th style="width: 170px">Related PIC</th>

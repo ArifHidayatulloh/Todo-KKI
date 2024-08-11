@@ -45,7 +45,7 @@
                                         <!-- Left Column -->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleSelectBorderWidth2">Departemen</label>
+                                                <label for="exampleSelectBorderWidth2">Departemen <span class="text-danger">*</span></label>
                                                 <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="dep_code" required>
                                                     <option value="" selected>Pilih departemen</option>
                                                     @forelse ($departemen as $dep)
@@ -56,11 +56,11 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="exampleInputBorderWidth2">Working List</label>
+                                                <label for="exampleInputBorderWidth2">Working List <span class="text-danger">*</span></label>
                                                 <input type="text" class="form-control form-control-border border-width-2" id="exampleInputBorderWidth2" placeholder="Working List" name="working_list" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="exampleSelectBorderWidth2">PIC</label>
+                                                <label for="exampleSelectBorderWidth2">PIC <span class="text-danger">*</span></label>
                                                 <select class="custom-select form-control-border border-width-2" id="exampleSelectBorderWidth2" name="pic" required>
                                                     <option value="" selected>Pilih PIC</option>
                                                     @forelse ($karyawan as $kar)
@@ -71,15 +71,15 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
-                                                <label for="exampleSelectBorderWidth2">Related PIC</label>
-                                                <div class="form-checkpic"  style="height:150px; overflow-y:auto;">
-                                                @foreach ($karyawan as $kar)
-                                                    <div class="form-check" >
-                                                        <input class="form-check-input" type="checkbox" name="relatedpic[]" value="{{ $kar->nik }}" id="relatedpic{{ $kar->nik }}" required>
-                                                        <label class="form-check-label" for="relatedpic{{ $kar->nik }}">
-                                                            {{ $kar->nama }}
-                                                        </label>
-                                                    </div>
+                                                <label for="exampleSelectBorderWidth2">Related PIC <span class="text-danger">*</span></label>
+                                                <div class="form-checkpic" style="height:150px; overflow-y:auto;">
+                                                    @foreach ($karyawan as $kar)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" name="relatedpic[]" value="{{ $kar->nik }}" id="relatedpic{{ $kar->nik }}">
+                                                            <label class="form-check-label" for="relatedpic{{ $kar->nik }}">
+                                                                {{ $kar->nama }}
+                                                            </label>
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -88,7 +88,7 @@
                                         <!-- Right Column -->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleInputBorderWidth2">Deadline</label>
+                                                <label for="exampleInputBorderWidth2">Deadline <span class="text-danger">*</span></label>
                                                 <input type="date" class="form-control form-control-border border-width-2" id="exampleInputBorderWidth2" name="deadline" required>
                                             </div>
                                             <div class="form-group">
@@ -96,7 +96,7 @@
                                                 <input type="date" class="form-control form-control-border border-width-2" id="exampleInputBorderWidth2" name="complete_date">
                                             </div>
                                             <div class="form-group">
-                                                <label>Comment Dephead</label>
+                                                <label>Comment Dephead <span class="text-danger">*</span></label>
                                                 <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Comment Dephead..." name="comment_dephead" style="white-space: pre-wrap;" required></textarea>
                                             </div>
                                             <div class="form-group">
