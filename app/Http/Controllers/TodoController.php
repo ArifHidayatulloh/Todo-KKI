@@ -6,6 +6,7 @@ use App\Exports\TodosExport;
 use App\Models\Departemen;
 use App\Models\DepartmenUser;
 use App\Models\Karyawan;
+use App\Models\Notification;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -112,7 +113,13 @@ class TodoController extends Controller
         $data['relatedpic'] = $data['relatedpic'] ?? [];
 
         // Simpan data ke database
-        Todo::create($data);
+        $todo = Todo::create($data);
+
+        Notification::create([
+            'user_id' => $request->pic,
+            'todo_id' => $todo->id,
+            'message' => $request->working_list
+        ]);
 
         // Redirect dengan pesan sukses
         return redirect('/todo/index')->with('success', 'Berhasil menambah todo');
@@ -263,6 +270,7 @@ class TodoController extends Controller
 
     function destroy(Todo $todo)
     {
+        Notification::where('todo_id', $todo->id)->delete();
         $todo->delete();
         return back()->with('success', 'Berhasil menghapus todo');
     }

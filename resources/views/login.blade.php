@@ -27,10 +27,10 @@
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <form action="/loginAction" method="post">
+                <form action="/loginAction" method="post" autocomplete="off">
                     @csrf
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email" name="email">
+                        <input type="text" class="form-control" placeholder="NIK" name="nik">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>

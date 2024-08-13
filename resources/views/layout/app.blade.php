@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ session('nik') }}">
     <title>REPORT</title>
 
     <!-- Google Font: Source Sans Pro -->
@@ -96,6 +98,9 @@
     <script src="{{ asset('lte/dist/js/pages/dashboard.js') }}"></script>
     <!-- bs-custom-file-input -->
     <script src="{{ asset('lte/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+
     <!-- Page specific script -->
     <script>
         $(function() {

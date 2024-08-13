@@ -10,9 +10,38 @@
         </li>
     </ul>
 
+
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="far fa-bell"></i>
+                @if ($unread > 0)
+                    <span class="badge badge-warning navbar-badge">{{ $unread }}</span>
+                @else
+                    <span class="badge badge-warning navbar-badge" style="display: none">{{ $unread }}</span>
+                @endif
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                <span class="dropdown-item dropdown-header">{{ $notifications->count() }} Notifications</span>
+                @forelse ($notifications as $notif)
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-envelope mr-2"></i> {{ $notif->message }}
 
+                        {{-- Ini ada di data yang belum di baca atau baru ditambahkan --}}
+                        <span class="badge badge-success">New</span>
+
+                        <span class="float-right text-muted text-sm">{{ $notif->created_at->diffForHumans() }}</span>
+                    </a>
+                @empty
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        Belum ada tugas baru
+                    </a>
+                @endforelse
+            </div>
+        </li>
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                 <i class="nav-icon fas fa-user"></i>
@@ -46,3 +75,82 @@
     </ul>
 </nav>
 <!-- /.navbar -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pastikan moment.js sudah diimport jika menggunakan bundler
+        // import moment from 'moment';
+
+        function formatDate(dateString) {
+            return moment(dateString).fromNow();
+        }
+
+        function fetchNotifications() {
+            fetch('/notifications/fetch')
+                .then(response => response.json())
+                .then(data => {
+                    const notifications = data.notifications;
+                    const unread = data.unread;
+
+                    // Update badge count
+                    const badge = document.querySelector('.navbar-badge');
+                    if (unread > 0) {
+                        badge.textContent = unread;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+                    // Update notification dropdown
+                    const dropdownMenu = document.querySelector('.dropdown-menu');
+                    dropdownMenu.innerHTML =
+                        `<span class="dropdown-item dropdown-header">${notifications.length} Notifications</span>`;
+
+                    if (notifications.length === 0) {
+                        dropdownMenu.innerHTML +=
+                            `<div class="dropdown-divider"></div><a href="#" class="dropdown-item">Belum ada tugas baru</a>`;
+                    } else {
+                        notifications.forEach(notif => {
+                            dropdownMenu.innerHTML +=
+                                `<div class="dropdown-divider"></div><a href="#" class="dropdown-item">${notif.message} <span class="float-right text-muted text-sm">${formatDate(notif.created_at)}</span></a>`;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching notifications:', error));
+        }
+
+        // Initial fetch
+        fetchNotifications();
+
+        // Polling interval (e.g., every 30 seconds)
+        setInterval(fetchNotifications, 60000);
+
+        // Mark notifications as read when clicking on the bell icon
+        const bellIcon = document.querySelector('.nav-link[data-toggle="dropdown"]');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+
+        if (bellIcon && csrfToken) {
+            bellIcon.addEventListener('click', function() {
+                fetch('/notifications/mark-as-read', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            markAsRead: true
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            fetchNotifications(); // Refresh notifications after marking as read
+                        }
+                    })
+                    .catch(error => console.error('Error marking notifications as read:', error));
+            });
+        } else {
+            console.error('CSRF token or notification icon not found.');
+        }
+    });
+</script>

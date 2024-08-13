@@ -7,6 +7,7 @@ use App\Http\Controllers\RelatedPicController;
 use App\Http\Controllers\TerminalController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\DepartemenUserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,6 +15,11 @@ Route::get("/", [IndexController::class, 'login']);
 Route::post("/loginAction", [IndexController::class, 'loginAction']);
 Route::get("/logout", [IndexController::class, 'logout']);
 Route::get("/dashboard", [IndexController::class, 'dashboard']);
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+// Routes/web.php
+Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications']);
+
+
 
 Route::controller(DepartemenController::class)->prefix('departemen')->group(function () {
     Route::get('/index','index');

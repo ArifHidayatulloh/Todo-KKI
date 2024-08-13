@@ -75,8 +75,8 @@
     .option-toggle {
         display: inline-block;
         padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        /* border: 1px solid #ddd; */
+        /* border-radius: 4px; */
         cursor: pointer;
         position: relative;
         background-color: #fff;

@@ -23,11 +23,11 @@ class IndexController extends Controller
     function loginAction(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email'],
+            'nik' => ['required'],
             'password' => ['required', 'string'],
         ]);
 
-        $karyawan = Karyawan::where('email', $request->email)->first();
+        $karyawan = Karyawan::where('nik', $request->nik)->first();
 
         if ($karyawan && Hash::check($request->password, $karyawan->password)) {
             $dibuat = Carbon::parse($karyawan->created_at)->format('d m Y');
@@ -57,7 +57,7 @@ class IndexController extends Controller
         $level = session('level');
         if ($level == 3 || $level == 4) {
             $departemenIds = DepartmenUser::where('nik', $nik)->pluck('dep_code');
-            $deadlineAsc = Todo::whereIn('status', [1, 2])
+            $deadlineAsc = Todo::where('status', 2)
                 ->whereIn('dep_code', $departemenIds)
                 ->where('deadline', '<', $oneWeekLater)
                 ->orderBy('deadline', 'asc')
@@ -71,7 +71,7 @@ class IndexController extends Controller
             $todosOutstanding = $outstanding;
         } elseif ($level == 5) {
             // Data deadline terdekat
-            $deadlineAsc = Todo::whereIn('status', [1, 2])
+            $deadlineAsc = Todo::where('status', 2)
             ->where('pic', session('nik'))
             ->where('deadline', '<', $oneWeekLater)
             ->orderBy('deadline', 'asc')
@@ -83,7 +83,7 @@ class IndexController extends Controller
             $todosDone = $done;
             $todosOutstanding = $outstanding;
         } else {
-            $deadlineAsc = Todo::whereIn('status', [1, 2])
+            $deadlineAsc = Todo::where('status',  2)
                 ->where('deadline', '<', $oneWeekLater)
                 ->orderBy('deadline', 'asc')
                 ->get();

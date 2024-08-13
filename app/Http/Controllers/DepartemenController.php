@@ -11,10 +11,13 @@ use Illuminate\Validation\ValidationException;
 
 class DepartemenController extends Controller
 {
-    function index(){
-        return view("departemen.index",[
-            'departemen' => Departemen::paginate(10)
-        ]);
+    function index(Request $request){
+        $search = $request->input('search');
+
+        $departemen = Departemen::query()->when($search, function($query, $search){
+            return $query->where('dep_code', 'LIKE',"%{$search}%")->orWhere('departemen', 'LIKE',"%{$search}%");
+        })->paginate(10);
+        return view("departemen.index", compact("departemen"));
     }
 
     function create(){

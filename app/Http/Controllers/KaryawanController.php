@@ -14,9 +14,14 @@ class KaryawanController extends Controller
 {
     function index(Request $request)
     {
-        return view("karyawan.index", [
-            'karyawan' => Karyawan::paginate(10)
-        ]);
+        $search = $request->get("search");
+
+        $karyawan = Karyawan::query()->when($search, function ($query,$search) {
+            return $query->where('nik', 'like', "%{$search}%")
+                ->orWhere('nama', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        })->paginate(10);
+        return view("karyawan.index", compact('karyawan') );
     }
 
     function create()

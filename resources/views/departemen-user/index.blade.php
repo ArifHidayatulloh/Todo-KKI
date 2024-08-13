@@ -30,7 +30,7 @@
                                     <a href="/departemen_user/create" class="btn btn-block btn-primary">Tambah Data</a>
                                 </h3>
 
-                                <div class="card-tools my-2">
+                                {{-- <div class="card-tools my-2">
                                     <div class="input-group input-group-sm" style="width: 150px;">
                                         <input type="text" name="table_search" class="form-control float-right"
                                             placeholder="Search">
@@ -41,7 +41,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             @if ($errors->any())
                                 @foreach ($errors->all() as $error)

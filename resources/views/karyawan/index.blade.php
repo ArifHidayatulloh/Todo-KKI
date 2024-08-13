@@ -31,16 +31,18 @@
                                 </h3>
 
                                 <div class="card-tools my-2">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input type="search" name="table_search" class="form-control float-right"
-                                            placeholder="Search" name="search" id="search">
+                                    <form action="/karyawan/index" method="get">
+                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                            <input type="search" name="search" class="form-control float-right"
+                                                placeholder="Search" name="search" id="search">
 
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                             @if ($errors->any())
@@ -83,7 +85,7 @@
                                                 <td>
                                                     @if ($item->level == 1)
                                                         Pengurus
-                                                        @elseif($item->level == 2)
+                                                    @elseif($item->level == 2)
                                                         General Manager
                                                     @elseif($item->level == 3)
                                                         Manager
