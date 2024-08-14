@@ -46,22 +46,36 @@
                                 </div>
                             </div>
                             @if ($errors->any())
-                                @foreach ($errors->all() as $error)
-                                    <div class="alert alert-warning alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
-                                        <p><i class="icon fas fa-exclamation-triangle"></i> {{ $error }}!</p>
-                                    </div>
-                                @endforeach
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Oops...',
+                                            html: `
+                                                @foreach ($errors->all() as $error)
+                                                    <p>{{ $error }}</p>
+                                                @endforeach
+                                                `,
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
 
+
                             @if (session('success'))
-                                <div class="alert alert-success alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                        aria-hidden="true">&times;</button>
-                                    <p><i class="icon fas fa-exclamation-triangle"></i> {{ session('success') }}!</p>
-                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: '{{ session('success') }}',
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
+
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="overflow-y: hidden;">
                                 <table class="table table-head-fixed text-nowrap">

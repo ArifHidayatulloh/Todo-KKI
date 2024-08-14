@@ -10,6 +10,7 @@ use App\Models\Notification;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class TodoController extends Controller
 {
@@ -82,6 +83,61 @@ class TodoController extends Controller
 
         // Kembalikan view dengan data yang diperlukan
         return view('todo.index', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
+    }
+
+    function request(Request $request){
+        $status = $request->get('status', '');
+        $pic = $request->get('pic', '');
+        $dep_code = $request->get('dep_code', '');
+        $departemenList = Departemen::all();
+        $karyawan = Karyawan::all();
+        $query = Todo::where('req_status','request');
+
+        // Filter berdasarkan status jika diberikan
+        if ($status != '') {
+            $query->where('status', $status);
+        }
+
+        // Filter berdasarkan PIC jika diberikan
+        if ($pic != '') {
+            $query->where('pic', $pic);
+        }
+
+        // Filter berdasarkan departemen jika diberikan
+        if ($dep_code != '') {
+            $query->where('dep_code', $dep_code);
+        }
+
+        $todos = $query->with(['karyawan', 'departemen'])->orderBy('updated_at', 'desc')->paginate(10);
+
+        // Olah data todo untuk mendapatkan komentar dan progres
+        foreach ($todos as $todo) {
+            // Pisahkan komentar pada field `comment_dephead`
+            $comments = array_map('trim', explode("\n", $todo->comment_dephead));
+
+            // Pisahkan update pada field `update_pic`
+            $updates = array_map('trim', explode("\n", $todo->update_pic));
+
+            $progress = [];
+            foreach ($updates as $update) {
+                if (strpos($update, '.') !== false) {
+                    $update = trim($update);
+                    list($num, $desc) = explode('.', $update, 2);
+                    $num = trim($num);
+                    $desc = trim($desc);
+                    if (!isset($progress[$num])) {
+                        $progress[$num] = [];
+                    }
+                    $progress[$num][] = $desc;
+                }
+            }
+
+            // Tambahkan komentar dan progres ke masing-masing todo
+            $todo->comments = $comments;
+            $todo->progress = $progress;
+        }
+
+        return view('todo.request', compact('todos','status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
     }
 
     function create()
@@ -282,4 +338,43 @@ class TodoController extends Controller
         $pic = $request->get('pic');
         return Excel::download(new TodosExport($status,$dep_code,$pic), 'todo.xlsx');
     }
+
+    function requestActionPic(Todo $todo){
+        if($todo->req_status == null || $todo->req_status == 'rejected'){
+            $todo->req_status = 'request';
+            $todo->update();
+            return back()->with('success', 'Berhasil mengirim request');
+        }
+        if($todo->req_status == 'request'){
+            return back()->withErrors(['req_status' => 'Request sudah dikirim ke todo ini']);
+        }
+        if($todo->req_status == 'approved'){
+            return back()->withErrors(['req_status' => 'Status todo sudah selesai']);
+        }
+    }
+
+    function approve(Todo $todo){
+        $todo->req_status = 'approved';
+        $todo->complete_date = Carbon::now();
+        if($todo->complete_date > $todo->deadline){
+            $todo->status = 1;
+        }else{
+            $todo->status = 3;
+        }
+
+        $todo->update();
+        return back()->with('success','Berhasil men-Approve todo');
+    }
+
+    function reject(Request $request, Todo $todo){
+        $reject = $request->validate([
+            'comment_update' => ['nullable'],
+        ]);
+
+        $reject['req_status'] = 'rejected';
+
+        $todo->update($reject);
+        return redirect('/todo/request')->with('success','Berhasil reject request');
+    }
+
 }

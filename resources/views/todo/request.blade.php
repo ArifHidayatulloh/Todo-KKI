@@ -115,7 +115,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Data Todo</h1>
+
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -135,62 +135,39 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                @if (session('level') == 1 || session('level') == 2)
-                                    <h3 class="card-title">
-                                        <a href="/todo/create" class="btn btn-block btn-primary">Tambah Data</a>
-                                    </h3>
-                                @endif
+                                <h4 class="m-0">Todo Request</h4>
+                            </div>
 
-                                <div class="card-tools my-2 d-flex">
-                                    @if (session('level') == 1 || session('level') == 2)
-                                        <form action="/todo/export" method="get" class="ml-2" id="export-form">
-                                            <input type="hidden" name="status" value="{{ $status }}">
-                                            <input type="hidden" name="pic" value="{{ $pic }}">
-                                            <input type="text" hidden name="dep_code" value="{{ $dep_code }}">
-                                            <button type="submit" class="btn btn-success" id="export-button"
-                                                @if ($todos->isEmpty()) disabled @endif>
-                                                <i class="fas fa-file-excel"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-
-                                <div>
-
-                                    @if ($errors->any())
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                Swal.fire({
-                                                    icon: 'warning',
-                                                    title: 'Oops...',
-                                                    html: `
+                            @if ($errors->any())
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Oops...',
+                                            html: `
                                                 @foreach ($errors->all() as $error)
                                                     <p>{{ $error }}</p>
                                                 @endforeach
                                                 `,
-                                                    confirmButtonText: 'Ok'
-                                                });
-                                            });
-                                        </script>
-                                    @endif
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
+                            @endif
 
 
-                                    @if (session('success'))
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                Swal.fire({
-                                                    icon: 'success',
-                                                    title: 'Success',
-                                                    text: '{{ session('success') }}',
-                                                    confirmButtonText: 'Ok'
-                                                });
-                                            });
-                                        </script>
-                                    @endif
-                                </div>
-                            </div>
-
-
+                            @if (session('success'))
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: '{{ session('success') }}',
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
+                            @endif
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-head-fixed text-nowrap min-height-table">
@@ -244,10 +221,6 @@
                                             <th>Complete Date</th>
                                             <th>Comment Dephead</th>
                                             <th>Update PIC</th>
-                                            @if (session('level') == 3 || session('level') == 4 || session('level') == 5)
-                                                <th>Request</th>
-                                                <th>Comment Update</th>
-                                            @endif
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -297,40 +270,54 @@
                                                     @endforeach
                                                 </td>
                                                 <td>
-                                                    @if($item->req_status == null)
-                                                        not in the request
-                                                    @elseif($item->req_tatus == 'request')
-                                                        in the request
-                                                    @else
-                                                        {{ $item->req_status }}
-                                                    @endif
+                                                    <a href="/todo/approve/{{ $item->id }}" class="btn btn-success"><i
+                                                            class="fas fa-check"></i></a>
+                                                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                        data-target="#modal-reject-{{ $item->id }}">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
                                                 </td>
-                                                <td>
-                                                    {{ $item->comment_update}}
-                                                </td>
-                                                <td>
-                                                    <a href="/todo/edit/{{ $item->id }}" class="btn btn-warning"><i
-                                                            class="fas fa-pen"></i></a>
-
-                                                    @if (session('level') == 1 || session('level') == 2)
-                                                        <a href="/todo/destroy/{{ $item->id }}" class="btn btn-danger"
-                                                            onclick="return confirm('Anda ingin menghapus todo?')"><i
-                                                                class="fas fa-trash"></i></a>
-                                                    @endif
-
-                                                    @if (session('level') == 3 || session('level') == 4 || session('level') == 5)
-                                                        @if ($item->status == 2)
-                                                            <a href="/todo/requestActionPic/{{ $item->id }}"
-                                                                class="btn btn-info"
-                                                                onclick="return confirm('Anda ingin mengajukan request?')"><i
-                                                                    class="fas fa-paper-plane"></i></a>
-                                                        @endif
-                                                    @endif
-                                                </td>
+                                                {{-- Ini adalah form Modal atau popup yang akan muncul ketika button reject dari masing masing data di klik --}}
+                                                <!-- Modal Reject -->
+                                                <div class="modal fade" id="modal-reject-{{ $item->id }}"
+                                                    tabindex="-1" role="dialog"
+                                                    aria-labelledby="modal-reject-label-{{ $item->id }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <form action="/todo/reject/{{ $item->id }}" method="post"
+                                                                enctype="multipart/form-data">
+                                                                @csrf
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title"
+                                                                        id="modal-reject-label-{{ $item->id }}">Reject
+                                                                        Todo</h5>
+                                                                    <button type="button" class="close"
+                                                                        data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label>Update Comment</label>
+                                                                        <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Keterangan..."
+                                                                            name="comment_update" style="white-space: pre-wrap;"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary">Reject</button>
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-dismiss="modal">Batal</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="11">Belum ada data...</td>
+                                                <td colspan="11">Belum ada request...</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -347,6 +334,9 @@
             </div>
         </section>
     </div>
+
+
+    <!-- End Modal Reject -->
 @endsection
 
 

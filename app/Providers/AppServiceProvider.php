@@ -6,7 +6,7 @@ use App\Models\Notification;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\Todo;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -35,9 +35,12 @@ class AppServiceProvider extends ServiceProvider
             $unread = Notification::where('user_id', $userId)
                 ->where('is_read', false)
                 ->count();
+
+                $requestDone = Todo::where('req_status', 'request')->count();
             $view->with([
                 'notifications' => $notifications,
-                'unread' => $unread
+                'unread' => $unread,
+                'requestDone' => $requestDone
             ]);
         });
     }

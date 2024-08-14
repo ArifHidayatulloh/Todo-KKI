@@ -30,35 +30,37 @@
                                     <a href="/departemen_user/create" class="btn btn-block btn-primary">Tambah Data</a>
                                 </h3>
 
-                                {{-- <div class="card-tools my-2">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input type="text" name="table_search" class="form-control float-right"
-                                            placeholder="Search">
 
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div> --}}
                             </div>
                             @if ($errors->any())
-                                @foreach ($errors->all() as $error)
-                                    <div class="alert alert-warning alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
-                                        <p><i class="icon fas fa-exclamation-triangle"></i> {{ $error }}!</p>
-                                    </div>
-                                @endforeach
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Oops...',
+                                            html: `
+                                                @foreach ($errors->all() as $error)
+                                                    <p>{{ $error }}</p>
+                                                @endforeach
+                                                `,
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
 
+
                             @if (session('success'))
-                                <div class="alert alert-success alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                        aria-hidden="true">&times;</button>
-                                    <p><i class="icon fas fa-exclamation-triangle"></i> {{ session('success') }}!</p>
-                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: '{{ session('success') }}',
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="overflow-y: hidden;">

@@ -60,4 +60,8 @@ Route::controller(TodoController::class)->prefix('todo')->group(function () {
     Route::post('/updatePIC/{todo}','updatePIC');
     Route::get('/destroy/{todo}','destroy');
     Route::get('/export', 'export');
+    Route::get('/request', 'request');
+    Route::get('/requestActionPic/{todo}','requestActionPic');
+    Route::get('/approve/{todo}','approve');
+    Route::post('/reject/{todo}','reject');
 });

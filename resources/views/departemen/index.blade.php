@@ -32,9 +32,9 @@
 
                                 <div class="card-tools my-2">
                                     <form action="/departemen/index" method="get">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
+                                        <div class="input-group input-group-sm" style="width: 150px;">
                                             <input type="search" name="search" class="form-control float-right"
-                                            placeholder="Search">
+                                                placeholder="Search">
 
                                             <div class="input-group-append">
                                                 <button type="submit" class="btn btn-default">
@@ -46,21 +46,34 @@
                                 </div>
                             </div>
                             @if ($errors->any())
-                                @foreach ($errors->all() as $error)
-                                    <div class="alert alert-warning alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert"
-                                            aria-hidden="true">&times;</button>
-                                        <p><i class="icon fas fa-exclamation-triangle"></i> {{ $error }}!</p>
-                                    </div>
-                                @endforeach
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Oops...',
+                                            html: `
+                                                @foreach ($errors->all() as $error)
+                                                    <p>{{ $error }}</p>
+                                                @endforeach
+                                                `,
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
 
+
                             @if (session('success'))
-                                <div class="alert alert-success alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert"
-                                        aria-hidden="true">&times;</button>
-                                    <p><i class="icon fas fa-exclamation-triangle"></i> {{ session('success') }}!</p>
-                                </div>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: '{{ session('success') }}',
+                                            confirmButtonText: 'Ok'
+                                        });
+                                    });
+                                </script>
                             @endif
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="overflow-y: hidden;">
@@ -80,8 +93,8 @@
                                                 <td>{{ $item->dep_code }}</td>
                                                 <td>{{ $item->departemen }}</td>
                                                 <td>
-                                                    <a href="/departemen/edit/{{ $item->id }}" class="btn btn-warning"><i
-                                                            class="fas fa-pen"></i></a>
+                                                    <a href="/departemen/edit/{{ $item->id }}"
+                                                        class="btn btn-warning"><i class="fas fa-pen"></i></a>
                                                     <a href="/departemen/destroy/{{ $item->id }}" class="btn btn-danger"
                                                         onclick="return confirm('Anda ingin menghapus departemen?')"><i
                                                             class="fas fa-trash"></i></a>
