@@ -209,15 +209,7 @@
                                             @endif
                                             <th>Related PIC</th>
                                             <th>Deadline</th>
-                                            <th class="status-column option-toggle">
-                                                Status
-                                                <ul class="option-list">
-                                                    <li data-value="">All</li>
-                                                    <li data-value="1">Outstanding</li>
-                                                    <li data-value="2">On Progress</li>
-                                                    <li data-value="3">Done</li>
-                                                </ul>
-                                            </th>
+                                            <th> Status </th>
                                             <th>Complete Date</th>
                                             <th>Comment Dephead</th>
                                             <th>Update PIC</th>
@@ -301,7 +293,7 @@
                                                                     <div class="form-group">
                                                                         <label>Update Comment</label>
                                                                         <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Keterangan..."
-                                                                            name="comment_update" style="white-space: pre-wrap;"></textarea>
+                                                                            name="comment_update" style="white-space: pre-wrap;">{{ $item->comment_update }}</textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">

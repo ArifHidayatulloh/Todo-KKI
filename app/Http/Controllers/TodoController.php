@@ -19,9 +19,24 @@ class TodoController extends Controller
         $status = $request->get('status', '');
         $pic = $request->get('pic', '');
         $dep_code = $request->get('dep_code', '');
+        $sortField = $request->input('sort_field', 'deadline'); // Default ke 'deadline'
+        $sortOrder = $request->input('sort_order', 'asc'); // Default ke ascending
 
         // Inisialisasi query berdasarkan level pengguna
-        if (session('level') == 3 || session('level') == 4) {
+        if (session('level') == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            if ($departemenIds->isNotEmpty()) {
+                $karyawanIds = DepartmenUser::whereIn('dep_code', $departemenIds)->pluck('nik');
+                $karyawan = Karyawan::whereIn('nik', $karyawanIds)->get();
+                $query = Todo::whereIn('dep_code', $departemenIds);
+                $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
+            } else {
+                $query = Todo::query();
+                $departemenList = Departemen::all();
+                // Ambil data karyawan dan departemen untuk dropdown
+                $karyawan = Karyawan::all();
+            }
+        } elseif (session('level') == 3 || session('level') == 4) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
             $query = Todo::whereIn('dep_code', $departemenIds);
             $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
@@ -30,6 +45,8 @@ class TodoController extends Controller
         } else {
             $query = Todo::query();
             $departemenList = Departemen::all();
+            // Ambil data karyawan dan departemen untuk dropdown
+            $karyawan = Karyawan::all();
         }
 
         // Filter berdasarkan status jika diberikan
@@ -47,8 +64,15 @@ class TodoController extends Controller
             $query->where('dep_code', $dep_code);
         }
 
+        // Tentukan pengurutan berdasarkan field yang dipilih
+        if ($sortField === 'created_at') {
+            $query->orderBy('created_at', $sortOrder);
+        } else {
+            $query->orderBy('deadline', $sortOrder);
+        }
+
         // Ambil data todo dengan relasi karyawan dan departemen
-        $todos = $query->with(['karyawan', 'departemen'])->orderBy('created_at', 'desc')->paginate(10);
+        $todos = $query->with(['karyawan', 'departemen'])->paginate(10);
 
         // Olah data todo untuk mendapatkan komentar dan progres
         foreach ($todos as $todo) {
@@ -77,25 +101,33 @@ class TodoController extends Controller
             $todo->progress = $progress;
         }
 
-        // Ambil data karyawan dan departemen untuk dropdown
-        $karyawan = Karyawan::all();
-         // Ambil semua departemen
+
+        // Ambil semua departemen
 
         // Kembalikan view dengan data yang diperlukan
-        return view('todo.index', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
+        return view('todo.index', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList', 'sortField', 'sortOrder'));
     }
 
-    function request(Request $request){
+    function request(Request $request)
+    {
         $status = $request->get('status', '');
         $pic = $request->get('pic', '');
         $dep_code = $request->get('dep_code', '');
         $departemenList = Departemen::all();
         $karyawan = Karyawan::all();
-        $query = Todo::where('req_status','request');
+        $query = Todo::where('req_status', 'request');
 
-        // Filter berdasarkan status jika diberikan
-        if ($status != '') {
-            $query->where('status', $status);
+        if (session('level') == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            if ($departemenIds->isNotEmpty()) {
+                $query->whereIn('dep_code', $departemenIds);
+                $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
+            } else {
+                $departemenList = Departemen::all();
+            }
+        } else {
+            $query = Todo::query();
+            $departemenList = Departemen::all();
         }
 
         // Filter berdasarkan PIC jika diberikan
@@ -137,15 +169,30 @@ class TodoController extends Controller
             $todo->progress = $progress;
         }
 
-        return view('todo.request', compact('todos','status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
+        return view('todo.request', compact('todos', 'status', 'pic', 'dep_code', 'karyawan', 'departemenList'));
     }
 
     function create()
     {
-        return view('todo.create', [
-            'departemen' => Departemen::all(),
-            'karyawan' => Karyawan::all(),
-        ]);
+        if (session('level') == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            if ($departemenIds != null) {
+                return view('todo.create', [
+                    'departemen' => Departemen::whereIn('dep_code', $departemenIds)->get(),
+                    'karyawan' => Karyawan::all(),
+                ]);
+            } else {
+                return view('todo.create', [
+                    'departemen' => Departemen::all(),
+                    'karyawan' => Karyawan::all(),
+                ]);
+            }
+        } else {
+            return view('todo.create', [
+                'departemen' => Departemen::all(),
+                'karyawan' => Karyawan::all(),
+            ]);
+        }
     }
 
     function store(Request $request)
@@ -181,70 +228,6 @@ class TodoController extends Controller
         return redirect('/todo/index')->with('success', 'Berhasil menambah todo');
     }
 
-    function filterStatus(Request $request)
-    {
-
-        $pic = $request->get('pic');
-        $status = $request->get('status');
-        $nik = session('nik');
-        $level = session('level');
-
-        // Menentukan query dasar berdasarkan level pengguna
-        $query = Todo::query();
-
-        if ($level == 3 || $level == 4) {
-            // Manager dan Kepala Departemen: Filter berdasarkan kode departemen
-            $departemenIds = DepartmenUser::where('nik', $nik)->pluck('dep_code');
-            $query->whereIn('dep_code', $departemenIds);
-        } elseif ($level == 5) {
-            // Employee: Filter berdasarkan PIC
-            $query->where('pic', $nik);
-        }
-
-        // Filter status
-        if ($status == 1) {
-            $query->where('status', 1);
-        } elseif ($status == 2) {
-            $query->where('status', 2);
-        } elseif ($status == 3) {
-            $query->where('status', 3);
-        }
-
-        // Mengurutkan dan mengambil data tugas dengan pagination
-        $todos = $query->orderBy('deadline', 'asc')->paginate(10);
-
-        // Memproses setiap todo untuk menambahkan komentar dan progres
-        foreach ($todos as $todo) {
-            // Memecah string comment_dephead menjadi array berdasarkan baris baru
-            $comments = array_map('trim', explode("\n", $todo->comment_dephead));
-
-            // Memecah string update_pic menjadi array berdasarkan baris baru
-            $updates = array_map('trim', explode("\n", $todo->update_pic));
-
-            // Mengelompokkan update berdasarkan nomor tugas
-            $progress = [];
-            foreach ($updates as $update) {
-                // Periksa apakah elemen mengandung titik dan deskripsi
-                if (strpos($update, '.') !== false) {
-                    // Menghapus spasi ekstra di sekitar nomor dan deskripsi
-                    $update = trim($update);
-                    list($num, $desc) = explode('.', $update, 2);
-                    $num = trim($num);
-                    $desc = trim($desc);
-                    if (!isset($progress[$num])) {
-                        $progress[$num] = [];
-                    }
-                    $progress[$num][] = $desc;
-                }
-            }
-
-            // Menyimpan hasil pemecahan ke dalam objek todo
-            $todo->comments = $comments;
-            $todo->progress = $progress;
-        }
-        $karyawan = Karyawan::all();
-        return view('todo.index', compact('todos', 'status', 'karyawan', 'pic'));
-    }
 
     function edit(Todo $todo)
     {
@@ -255,8 +238,23 @@ class TodoController extends Controller
             $todo->relatedpic = $todo->relatedpic ?? [];
         }
 
-        if (session('level') == 1 || session('level') == 2) {
-            return view('todo.edit', [
+        if (session('level') == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            if ($departemenIds != null) {
+                return view('todo.create', [
+                    'todo' => $todo,
+                    'departemen' => Departemen::whereIn('dep_code', $departemenIds)->get(),
+                    'karyawan' => Karyawan::all(),
+                ]);
+            } else {
+                return view('todo.create', [
+                    'todo' => $todo,
+                    'departemen' => Departemen::all(),
+                    'karyawan' => Karyawan::all(),
+                ]);
+            }
+        } elseif (session('level') == 2) {
+            return view('todo.editPic', [
                 'todo' => $todo,
                 'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
@@ -336,37 +334,40 @@ class TodoController extends Controller
         $status = $request->get('status');
         $dep_code = $request->get('dep_code');
         $pic = $request->get('pic');
-        return Excel::download(new TodosExport($status,$dep_code,$pic), 'todo.xlsx');
+        return Excel::download(new TodosExport($status, $dep_code, $pic), 'todo.xlsx');
     }
 
-    function requestActionPic(Todo $todo){
-        if($todo->req_status == null || $todo->req_status == 'rejected'){
+    function requestActionPic(Todo $todo)
+    {
+        if ($todo->req_status == null || $todo->req_status == 'rejected') {
             $todo->req_status = 'request';
             $todo->update();
             return back()->with('success', 'Berhasil mengirim request');
         }
-        if($todo->req_status == 'request'){
+        if ($todo->req_status == 'request') {
             return back()->withErrors(['req_status' => 'Request sudah dikirim ke todo ini']);
         }
-        if($todo->req_status == 'approved'){
+        if ($todo->req_status == 'approved') {
             return back()->withErrors(['req_status' => 'Status todo sudah selesai']);
         }
     }
 
-    function approve(Todo $todo){
+    function approve(Todo $todo)
+    {
         $todo->req_status = 'approved';
         $todo->complete_date = Carbon::now();
-        if($todo->complete_date > $todo->deadline){
+        if ($todo->complete_date > $todo->deadline) {
             $todo->status = 1;
-        }else{
+        } else {
             $todo->status = 3;
         }
 
         $todo->update();
-        return back()->with('success','Berhasil men-Approve todo');
+        return back()->with('success', 'Berhasil men-Approve todo');
     }
 
-    function reject(Request $request, Todo $todo){
+    function reject(Request $request, Todo $todo)
+    {
         $reject = $request->validate([
             'comment_update' => ['nullable'],
         ]);
@@ -374,7 +375,6 @@ class TodoController extends Controller
         $reject['req_status'] = 'rejected';
 
         $todo->update($reject);
-        return redirect('/todo/request')->with('success','Berhasil reject request');
+        return redirect('/todo/request')->with('success', 'Berhasil reject request');
     }
-
 }

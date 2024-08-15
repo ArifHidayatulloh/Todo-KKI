@@ -35,7 +35,41 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                @if (session('level') == 1 || session('level') == 2)
+                @if (session('level') == 1)
+                    <li class="nav-item">
+                        <a href="/departemen/index" class="nav-link">
+                            <i class="nav-icon fas fa-landmark"></i>
+                            <p>
+                                Departemen
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/karyawan/index" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Karyawan
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/departemen_user/index" class="nav-link">
+                            <i class="nav-icon fas fa-building"></i>
+                            <p>
+                                Departemen User
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/todo/index" class="nav-link">
+                            <i class="nav-icon fas fa-list-ol"></i>
+                            <p>
+                                To Do
+                            </p>
+                        </a>
+                    </li>
+                @elseif(session('level') == 2)
                     <li class="nav-item">
                         <a href="/departemen/index" class="nav-link">
                             <i class="nav-icon fas fa-landmark"></i>

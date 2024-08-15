@@ -103,6 +103,23 @@
         border-bottom: none;
         /* Menghilangkan garis bawah pada baris terakhir jika tabel kosong */
     }
+
+    .sort-icon {
+        margin-left: 5px;
+        display: inline-block;
+    }
+
+    .sort-icon::before {
+        content: '▲';
+        /* Default ke panah ke atas */
+        font-size: 12px;
+        color: #333;
+    }
+
+    .sort-icon.desc::before {
+        content: '▼';
+        /* Ganti dengan panah ke bawah saat descending */
+    }
 </style>
 
 
@@ -231,7 +248,11 @@
                                                 <th>PIC</th>
                                             @endif
                                             <th>Related PIC</th>
-                                            <th>Deadline</th>
+                                            <th class="deadline-column" style="cursor: pointer;">
+                                                Deadline
+                                                <span
+                                                    class="sort-icon {{ request('sort_order') === 'desc' ? 'desc' : '' }}"></span>
+                                            </th>
                                             <th class="status-column option-toggle">
                                                 Status
                                                 <ul class="option-list">
@@ -246,8 +267,11 @@
                                             <th>Update PIC</th>
                                             @if (session('level') == 3 || session('level') == 4 || session('level') == 5)
                                                 <th>Request</th>
-                                                <th>Comment Update</th>
                                             @endif
+                                            <th class="created-at-column" style="cursor: pointer;">
+                                                Created At
+                                                <span class="sort-icon {{ $sortField === 'created_at' && $sortOrder === 'desc' ? 'desc' : '' }}"></span>
+                                            </th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -265,7 +289,7 @@
                                                         @endforeach
                                                     @endif
                                                 </td>
-                                                <td>{{ Carbon\Carbon::parse($item->deadline)->format('d m Y') }}</td>
+                                                <td>{{ Carbon\Carbon::parse($item->deadline)->format('d M Y') }}</td>
                                                 <td>
                                                     @if ($item->status == 1)
                                                         <span class="badge badge-danger">Outstanding</span>
@@ -277,7 +301,7 @@
                                                 </td>
                                                 <td>
                                                     @if ($item->complete_date)
-                                                        {{ Carbon\Carbon::parse($item->complete_date)->format('d m Y') }}
+                                                        {{ Carbon\Carbon::parse($item->complete_date)->format('d M Y') }}
                                                     @else
                                                         {{ $item->complete_date }}
                                                     @endif
@@ -296,18 +320,50 @@
                                                         </p>
                                                     @endforeach
                                                 </td>
-                                                <td>
-                                                    @if($item->req_status == null)
-                                                        not in the request
-                                                    @elseif($item->req_tatus == 'request')
-                                                        in the request
-                                                    @else
-                                                        {{ $item->req_status }}
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    {{ $item->comment_update}}
-                                                </td>
+                                                @if (session('level') == 3 || session('level') == 4 || session('level') == 5)
+                                                    <td>
+                                                        @if ($item->req_status == null)
+                                                            not in the request
+                                                        @elseif($item->req_status == 'request')
+                                                            in the request
+                                                        @elseif($item->req_status == 'rejected')
+                                                            {{ $item->req_status }} <button type="button"
+                                                                class="btn btn-danger" data-toggle="modal"
+                                                                data-target="#modal-reject-{{ $item->id }}">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <!-- Modal -->
+                                                            <div class="modal fade" id="modal-reject-{{ $item->id }}"
+                                                                tabindex="-1" role="dialog"
+                                                                aria-labelledby="modal-reject-label-{{ $item->id }}"
+                                                                aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="modal-reject-label-{{ $item->id }}">
+                                                                                Keterangan</h5>
+                                                                            <button type="button" class="close"
+                                                                                data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <div class="form-group">
+                                                                                <label>Comment Update</label>
+                                                                                <textarea class="form-control form-control-border border-width-2" rows="3" placeholder="Keterangan..."
+                                                                                    name="comment_update" style="white-space: pre-wrap;" disabled>{{ $item->comment_update }}</textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            {{ $item->req_status }}
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                                <td>{{$item->created_at->format('d M Y')}}</td>
                                                 <td>
                                                     <a href="/todo/edit/{{ $item->id }}" class="btn btn-warning"><i
                                                             class="fas fa-pen"></i></a>
@@ -334,6 +390,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
+
                                 </table>
                             </div>
                             <!-- /.card-body -->
@@ -353,14 +410,14 @@
 <!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Function to toggle dropdown visibility
+        // Toggle dropdown visibility
         function toggleDropdown(thElement) {
             var optionList = thElement.querySelector('.option-list');
             var isVisible = optionList.style.display === 'block';
             optionList.style.display = isVisible ? 'none' : 'block';
         }
 
-        // Function to handle option selection
+        // Handle option click
         function handleOptionClick(thElement, field) {
             var optionList = thElement.querySelector('.option-list');
             optionList.querySelectorAll('li').forEach(function(item) {
@@ -371,21 +428,35 @@
             });
         }
 
-        // Function to submit form with selected filter
-        function submitForm(field, value) {
+        // Submit form with selected value and sorting order
+        function submitForm(field, value, sortOrder = 'asc') {
             var form = document.createElement('form');
             form.method = 'get';
             form.action = '/todo/index';
 
-            // Add the selected filter field
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = field;
-            input.value = value;
-            form.appendChild(input);
+            // Append selected filter value
+            var inputField = document.createElement('input');
+            inputField.type = 'hidden';
+            inputField.name = field;
+            inputField.value = value;
+            form.appendChild(inputField);
 
-            // Add other filter fields if they exist
-            ['status', 'dep_code', 'pic'].forEach(function(filterField) {
+            // Append sorting order
+            var inputSort = document.createElement('input');
+            inputSort.type = 'hidden';
+            inputSort.name = 'sort_order';
+            inputSort.value = sortOrder;
+            form.appendChild(inputSort);
+
+            // Append field to sort
+            var inputSortField = document.createElement('input');
+            inputSortField.type = 'hidden';
+            inputSortField.name = 'sort_field';
+            inputSortField.value = field;
+            form.appendChild(inputSortField);
+
+            // Preserve other filters
+            ['status', 'dep_code', 'pic', 'deadline'].forEach(function(filterField) {
                 if (filterField !== field) {
                     var existingInput = document.querySelector(`input[name="${filterField}"]`);
                     if (existingInput) {
@@ -402,45 +473,62 @@
             form.submit();
         }
 
-        // Setup event listeners
-        var thStatus = document.querySelector('th.status-column');
+        // Apply toggle and option click handler for each dropdown
         var thDepartemen = document.querySelector('th.departemen-column');
         var thPic = document.querySelector('th.pic-column');
-
-        if (thStatus) {
-            var optionListStatus = thStatus.querySelector('.option-list');
-            thStatus.addEventListener('click', function() {
-                toggleDropdown(thStatus);
-            });
-            handleOptionClick(thStatus, 'status');
-        }
+        var thDeadline = document.querySelector('th.deadline-column');
+        var thStatus = document.querySelector('th.status-column');
+        var thCreatedAt = document.querySelector('th.created-at-column'); // For created_at
 
         if (thDepartemen) {
-            var optionListDepartemen = thDepartemen.querySelector('.departemen-options');
             thDepartemen.addEventListener('click', function() {
-                toggleDropdown(thDepartemen);
+                toggleDropdown(this);
             });
             handleOptionClick(thDepartemen, 'dep_code');
         }
 
         if (thPic) {
-            var optionListPic = thPic.querySelector('.pic-options');
             thPic.addEventListener('click', function() {
-                toggleDropdown(thPic);
+                toggleDropdown(this);
             });
             handleOptionClick(thPic, 'pic');
         }
 
-        // Hide dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            [thStatus, thDepartemen, thPic].forEach(function(thElement) {
-                var optionList = thElement ? thElement.querySelector(
-                    '.option-list, .departemen-options, .pic-options') : null;
-                if (optionList && !thElement.contains(event.target) && !optionList.contains(
-                        event.target)) {
-                    optionList.style.display = 'none';
-                }
+        if (thDeadline) {
+            thDeadline.addEventListener('click', function() {
+                var currentSortOrder = thDeadline.querySelector('.sort-icon').classList.contains('desc') ? 'asc' : 'desc';
+                submitForm('deadline', '', currentSortOrder);
             });
+        }
+
+        if (thStatus) {
+            thStatus.addEventListener('click', function() {
+                toggleDropdown(this);
+            });
+            handleOptionClick(thStatus, 'status');
+        }
+
+        if (thCreatedAt) {
+            thCreatedAt.addEventListener('click', function() {
+                var currentSortOrder = thCreatedAt.querySelector('.sort-icon').classList.contains('desc') ? 'asc' : 'desc';
+                submitForm('created_at', '', currentSortOrder);
+            });
+        }
+
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            var isClickInside = thDepartemen.contains(event.target) ||
+                thPic.contains(event.target) ||
+                thDeadline.contains(event.target) ||
+                thStatus.contains(event.target) ||
+                thCreatedAt.contains(event.target); // For created_at
+
+            if (!isClickInside) {
+                var optionLists = document.querySelectorAll('.option-list');
+                optionLists.forEach(function(list) {
+                    list.style.display = 'none';
+                });
+            }
         });
     });
 </script>
