@@ -12,7 +12,7 @@ class DepartemenUserController extends Controller
 {
     function index(){
         return view('departemen-user.index',[
-            'departemenUser' => DepartmenUser::paginate(10),
+            'departemenUser' => DepartmenUser::with('karyawan')->paginate(10),
         ]);
     }
 

@@ -33,7 +33,11 @@ class TodosExport implements FromView
         }
 
         if ($this->dep_code) {
-            $query->where('dep_code', $this->dep_code);
+            if (is_array($this->dep_code)) {
+                $query->whereIn('dep_code', $this->dep_code);  // Menggunakan whereIn untuk array
+            } else {
+                $query->where('dep_code', $this->dep_code);
+            }
         }
 
         if ($this->pic) {

@@ -40,8 +40,11 @@ class TodoController extends Controller
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
             $query = Todo::whereIn('dep_code', $departemenIds);
             $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
+            $karyawan = Karyawan::all();
         } elseif (session('level') == 5) {
             $query = Todo::where('pic', session('nik'));
+            $karyawan = Karyawan::all();
+            $departemenList = Departemen::all();
         } else {
             $query = Todo::query();
             $departemenList = Departemen::all();
@@ -115,29 +118,26 @@ class TodoController extends Controller
         $dep_code = $request->get('dep_code', '');
         $departemenList = Departemen::all();
         $karyawan = Karyawan::all();
-        $query = Todo::where('req_status', 'request');
+
+        // Inisialisasi query untuk hanya mengambil Todo dengan req_status 'request'
+        $query = Todo::query()->where('req_status', '=', 'request');
 
         if (session('level') == 1) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
             if ($departemenIds->isNotEmpty()) {
                 $query->whereIn('dep_code', $departemenIds);
                 $departemenList = Departemen::whereIn('dep_code', $departemenIds)->get();
-            } else {
-                $departemenList = Departemen::all();
             }
-        } else {
-            $query = Todo::query();
-            $departemenList = Departemen::all();
         }
 
         // Filter berdasarkan PIC jika diberikan
-        if ($pic != '') {
-            $query->where('pic', $pic);
+        if (!empty($pic)) {
+            $query->where('pic', '=', $pic);
         }
 
         // Filter berdasarkan departemen jika diberikan
-        if ($dep_code != '') {
-            $query->where('dep_code', $dep_code);
+        if (!empty($dep_code)) {
+            $query->where('dep_code', '=', $dep_code);
         }
 
         $todos = $query->with(['karyawan', 'departemen'])->orderBy('updated_at', 'desc')->paginate(10);
@@ -176,7 +176,7 @@ class TodoController extends Controller
     {
         if (session('level') == 1) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
-            if ($departemenIds != null) {
+            if ($departemenIds->isNotEmpty()) {
                 return view('todo.create', [
                     'departemen' => Departemen::whereIn('dep_code', $departemenIds)->get(),
                     'karyawan' => Karyawan::all(),
@@ -334,6 +334,17 @@ class TodoController extends Controller
         $status = $request->get('status');
         $dep_code = $request->get('dep_code');
         $pic = $request->get('pic');
+
+        // Cek apakah user level 1 dan memiliki daftar departemen
+        if (session('level') == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+
+            // Jika user memiliki daftar departemen dan dep_code tidak ditentukan di request
+            if ($departemenIds->isNotEmpty() && empty($dep_code)) {
+                $dep_code = $departemenIds->toArray();
+            }
+        }
+
         return Excel::download(new TodosExport($status, $dep_code, $pic), 'todo.xlsx');
     }
 

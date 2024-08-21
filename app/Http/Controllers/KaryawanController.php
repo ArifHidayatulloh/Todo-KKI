@@ -16,12 +16,12 @@ class KaryawanController extends Controller
     {
         $search = $request->get("search");
 
-        $karyawan = Karyawan::query()->when($search, function ($query,$search) {
+        $karyawan = Karyawan::query()->when($search, function ($query, $search) {
             return $query->where('nik', 'like', "%{$search}%")
                 ->orWhere('nama', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%");
         })->paginate(10);
-        return view("karyawan.index", compact('karyawan') );
+        return view("karyawan.index", compact('karyawan'));
     }
 
     function create()
@@ -97,14 +97,23 @@ class KaryawanController extends Controller
     function destroy(Karyawan $karyawan)
     {
 
-        $cek = DepartmenUser::where('nik', $karyawan->nik)->first();
-        if ($cek) {
-            $cek_todo = Todo::where('pic', $karyawan->nik)->where('relatedpic', $karyawan->nik)->first();
-            if ($cek_todo) {
-                return back()->withErrors(['nik' => 'NIK karyawan digunakan pada todo'])->withInput();
-            }
+        // Cek apakah NIK digunakan di kolom 'pic' atau 'relatedpic' di tabel todo
+        $cek_todo = Todo::where(function ($query) use ($karyawan) {
+            $query->where('pic', $karyawan->nik)
+                ->orWhere('relatedpic', $karyawan->nik);
+        })->first();
+
+        if ($cek_todo) {
+            return back()->withErrors(['nik' => 'NIK karyawan digunakan pada todo'])->withInput();
+        }
+
+        // Cek apakah NIK digunakan di tabel DepartmenUser
+        $cek_departmenUser = DepartmenUser::where('nik', $karyawan->nik)->first();
+        if ($cek_departmenUser) {
             return back()->withErrors(['nik' => 'NIK karyawan digunakan pada departemen user'])->withInput();
         }
+
+        // Hapus karyawan jika tidak ada yang menggunakan NIK-nya
         $karyawan->delete();
         return back()->with('success', 'Berhasil menghapus karyawan');
     }
