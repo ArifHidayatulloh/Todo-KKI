@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Todo;
+use App\Models\Departemen;
+use App\Models\Karyawan;
+use App\Models\DepartmenUser;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -35,8 +39,16 @@ class AppServiceProvider extends ServiceProvider
             $unread = Notification::where('user_id', $userId)
                 ->where('is_read', false)
                 ->count();
-
+            if (session('level') == 1) {
+                $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+                if ($departemenIds->isNotEmpty()) {
+                    $requestDone = Todo::whereIn('dep_code', $departemenIds)->where('req_status','request')->count();
+                } else {
+                    $requestDone = Todo::where('req_status', 'request')->count();
+                }
+            }else{
                 $requestDone = Todo::where('req_status', 'request')->count();
+            }
             $view->with([
                 'notifications' => $notifications,
                 'unread' => $unread,

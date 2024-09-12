@@ -357,7 +357,7 @@
         function submitForm(field, value) {
             var form = document.createElement('form');
             form.method = 'get';
-            form.action = '/todo/index';
+            form.action = '/todo/request';
 
             // Add the selected filter field
             var input = document.createElement('input');

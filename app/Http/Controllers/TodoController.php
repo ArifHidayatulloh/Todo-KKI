@@ -130,14 +130,8 @@ class TodoController extends Controller
             }
         }
 
-        // Filter berdasarkan PIC jika diberikan
-        if (!empty($pic)) {
-            $query->where('pic', '=', $pic);
-        }
-
-        // Filter berdasarkan departemen jika diberikan
-        if (!empty($dep_code)) {
-            $query->where('dep_code', '=', $dep_code);
+        if ($dep_code != '') {
+            $query->where('dep_code', $dep_code);
         }
 
         $todos = $query->with(['karyawan', 'departemen'])->orderBy('updated_at', 'desc')->paginate(10);
@@ -240,21 +234,21 @@ class TodoController extends Controller
 
         if (session('level') == 1) {
             $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
-            if ($departemenIds != null) {
-                return view('todo.create', [
+            if ($departemenIds->isNotEmpty()) {
+                return view('todo.edit', [
                     'todo' => $todo,
                     'departemen' => Departemen::whereIn('dep_code', $departemenIds)->get(),
                     'karyawan' => Karyawan::all(),
                 ]);
             } else {
-                return view('todo.create', [
+                return view('todo.edit', [
                     'todo' => $todo,
                     'departemen' => Departemen::all(),
                     'karyawan' => Karyawan::all(),
                 ]);
             }
         } elseif (session('level') == 2) {
-            return view('todo.editPic', [
+            return view('todo.edit', [
                 'todo' => $todo,
                 'departemen' => Departemen::all(),
                 'karyawan' => Karyawan::all(),
@@ -286,8 +280,10 @@ class TodoController extends Controller
         if ($data['complete_date'] != null) {
             if ($data['complete_date'] > $data['deadline']) {
                 $data['status'] = 1; // Status jika complete_date setelah deadline
+                $data['req_status'] = 'approved';
             } else {
                 $data['status'] = 3; // Status jika complete_date sebelum atau sama dengan deadline
+                $data['req_status'] = 'approved';
             }
         } else {
             // Tentukan status default jika complete_date null

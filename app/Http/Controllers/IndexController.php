@@ -49,13 +49,35 @@ class IndexController extends Controller
     {
         $departemens = Departemen::count();
         $karyawans = Karyawan::count();
-        // $terminals = Terminal::count();
-        // $relatedPIC = RelatedPIC::count();
 
         $oneWeekLater = Carbon::now()->addWeek();
         $nik = session('nik');
         $level = session('level');
-        if ($level == 3 || $level == 4) {
+
+        if ($level == 1) {
+            $departemenIds = DepartmenUser::where('nik', session('nik'))->pluck('dep_code');
+            if ($departemenIds->isNotEmpty()) {
+                $deadlineAsc = Todo::whereIn('dep_code', $departemenIds)->where('status', '2')->where('deadline', '<', $oneWeekLater)->orderBy('deadline', 'asc')->get();
+                $outstanding = Todo::where('status', 1)->whereIn('dep_code', $departemenIds)->count();
+                $onProgres = Todo::where('status', 2)->whereIn('dep_code', $departemenIds)->count();
+                $done = Todo::where('status', 3)->whereIn('dep_code', $departemenIds)->count();
+                $todosProgres = $onProgres;
+                $todosDone = $done;
+                $todosOutstanding = $outstanding;
+            } else {
+                $deadlineAsc = Todo::where('status',  2)
+                    ->where('deadline', '<', $oneWeekLater)
+                    ->orderBy('deadline', 'asc')
+                    ->get();
+
+                $outstanding = Todo::where('status', 1)->count();
+                $onprogres = Todo::where('status', 2)->count();
+                $done = Todo::where('status', 3)->count();
+                $todosProgres = $onprogres;
+                $todosDone = $done;
+                $todosOutstanding = $outstanding;
+            }
+        } elseif ($level == 3 || $level == 4) {
             $departemenIds = DepartmenUser::where('nik', $nik)->pluck('dep_code');
             $deadlineAsc = Todo::where('status', 2)
                 ->whereIn('dep_code', $departemenIds)
@@ -72,10 +94,10 @@ class IndexController extends Controller
         } elseif ($level == 5) {
             // Data deadline terdekat
             $deadlineAsc = Todo::where('status', 2)
-            ->where('pic', session('nik'))
-            ->where('deadline', '<', $oneWeekLater)
-            ->orderBy('deadline', 'asc')
-            ->get();
+                ->where('pic', session('nik'))
+                ->where('deadline', '<', $oneWeekLater)
+                ->orderBy('deadline', 'asc')
+                ->get();
             $outstanding = Todo::where('status', 1)->where('pic', session('nik'))->count();
             $onprogres = Todo::where('status', 2)->where('pic', session('nik'))->count();
             $done = Todo::where('status', 3)->where('pic', session('nik'))->count();
@@ -128,11 +150,9 @@ class IndexController extends Controller
         return view('dashboard', [
             'departemens' => $departemens,
             'karyawans' => $karyawans,
-            // 'terminals' => $terminals,
-            // 'relatedPIC' => $relatedPIC,
-           'todoProgres' => $todosProgres,
-           'todoDone' => $todosDone,
-           'todoOutstanding' => $todosOutstanding,
+            'todoProgres' => $todosProgres,
+            'todoDone' => $todosDone,
+            'todoOutstanding' => $todosOutstanding,
             'deadlineAsc' => $deadlineAsc,
         ]);
     }

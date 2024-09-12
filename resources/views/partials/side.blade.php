@@ -62,12 +62,30 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="/todo/index" class="nav-link">
+                        <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-list-ol"></i>
                             <p>
-                                To Do
+                                To Modul
+                                <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/todo/index" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Do List</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/todo/request" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Request</p>
+                                    @if ($requestDone > 0)
+                                        <span class="right badge badge-warning">{{ $requestDone }}</span>
+                                    @endif
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 @elseif(session('level') == 2)
                     <li class="nav-item">
